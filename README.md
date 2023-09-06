@@ -1,4 +1,4 @@
-# proyectoITCA
+# Proyecto ITCA
 
 ## Instalación
 Con git clone el proyecto se descarga en el directorio en el que estén en ese momento.
