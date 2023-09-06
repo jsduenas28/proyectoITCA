@@ -1,0 +1,7 @@
+{
+  "name": "pracProyecto",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
