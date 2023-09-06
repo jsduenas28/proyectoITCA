@@ -5,8 +5,14 @@ Con git clone el proyecto se descarga en el directorio en el que estén en ese m
 
 Por ejemplo, si estan en Documentos, el proyecto se va a guardar en ese directorio.
 
-**en git bash**: git clone https://github.com/jsduenas28/proyectoITCA.git
-npm install para instalar node_modules
+**en git bash**: 
+```bash
+git clone https://github.com/jsduenas28/proyectoITCA.git
+```
+**instalar node_modules**:
+```bash
+npm install
+```
 
 ## Instrucciones
 
