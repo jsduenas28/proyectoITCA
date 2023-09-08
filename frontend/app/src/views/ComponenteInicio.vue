@@ -21,6 +21,19 @@
 
                 <ion-row style="margin-top: 25px;">
                     <ion-col>
+                        <div id="btnContainer">
+                            <ion-button router-link="/editor">
+                                Nueva Nota
+                            </ion-button>
+                            <ion-button>
+                                Generar Cuestionario
+                            </ion-button>
+                        </div>
+                    </ion-col>
+                </ion-row>
+
+                <ion-row style="margin-top: 25px;">
+                    <ion-col>
                         <div>
                             <h4>Aqui tienes tus 5 notas mas recientes</h4>
                         </div>
@@ -166,11 +179,11 @@
 
 <script>
 import ComponenteMenu from "../views/ComponenteMenu.vue";
-import { IonPage, IonContent, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from "@ionic/vue";
+import { IonPage, IonContent, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton } from "@ionic/vue";
 export default {
     name: 'ComponenteInicio',
     components: {
-        ComponenteMenu, IonContent, IonPage, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent
+        ComponenteMenu, IonContent, IonPage, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton
     },
     data() {
     return {
@@ -196,7 +209,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 *{
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -245,5 +258,16 @@ main {
     main{
         grid-template-columns: repeat(1, 1fr);
     }
+}
+
+#btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#btnContainer ion-button {
+    margin: 5px;
+    color: black;
 }
 </style>

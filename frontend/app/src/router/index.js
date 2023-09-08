@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import HomePage from '../views/HomePage.vue'
 import ComponenteMenu from '../views/ComponenteMenu.vue'
 import ComponenteInicio from '../views/ComponenteInicio.vue'
+import ComponenteEditor from '../views/ComponenteEditor.vue'
 
 const routes = [
   {
@@ -22,6 +23,11 @@ const routes = [
     path: '/inicio',
     name: 'ComponenteInico',
     component: ComponenteInicio
+  },
+  {
+    path: '/editor',
+    name: 'ComponenteEditor',
+    component: ComponenteEditor
   }
 ]
 
