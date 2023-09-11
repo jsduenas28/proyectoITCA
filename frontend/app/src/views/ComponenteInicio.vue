@@ -1,273 +1,163 @@
 <template>
-     <ion-page>
-        
-        <ion-content class="ion-padding">
-            <ComponenteMenu></ComponenteMenu>
-            
-            <div style="margin-top: 50px;">
-                <ion-row class="ion-paddings">
-                    <ion-col size="7">
-                        <div style="border-bottom: 5px solid #5f7abd;">
-                            <h1>{{ mensajeSaludo }}</h1>
-                        </div>
-                    </ion-col>
+    <ion-page>
+      <ion-content class="ion-padding">
+        <div class="center-container">
+          <h1 class="title"><strong>{{ mensajeSaludo }}</strong></h1>
+          <div class="line"></div>
+        </div>
 
-                    <ion-col offset="1" size="4"> 
-                        <div id="img-div">
-                            <img src="../../public/favicon.png" alt="">
-                        </div>
-                    </ion-col>
-                </ion-row>
+        <div style="display: flex;">
+          <ion-icon :icon="briefcaseSharp" size="large" color="ligth"></ion-icon>   
+              <p style="margin-top: 30px; ">Tus carpetas</p> 
+        </div>
 
-                <ion-row style="margin-top: 25px;">
-                    <ion-col>
-                        <div id="btnContainer">
-                            <ion-button router-link="/editor">
-                                Nueva Nota
-                            </ion-button>
-                            <ion-button>
-                                Generar Cuestionario
-                            </ion-button>
-                        </div>
-                    </ion-col>
-                </ion-row>
-
-                <ion-row style="margin-top: 25px;">
-                    <ion-col>
-                        <div>
-                            <h4>Aqui tienes tus 5 notas mas recientes</h4>
-                        </div>
-                    </ion-col>
-                </ion-row>
-
-                <ion-row >
-                    <ion-col>
-                        <div class="carrusel">
-                            <div class="element">
-                                <ion-card style="height: 180px; margin: 3px 3px 3px 3px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Materia</ion-card-title>
-                                        <ion-card-subtitle>Tema de estudio</ion-card-subtitle>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion ...</p>
-                                    </ion-card-content>
-                                </ion-card>
-                            </div>
-                            <div class="element">
-                                <ion-card style="height: 180px; margin: 3px 3px 3px 3px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Lenguajes de programación</ion-card-title>
-                                        <ion-card-subtitle>Introducción a los lenguajes de programació </ion-card-subtitle>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Python: uno de ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            </div>
-                            <div class="element">
-                                <ion-card style="height: 180px; margin: 3px 3px 3px 3px;">
-                                    <ion-card-header>
-                                        <ion-card-title>FPDS</ion-card-title>
-                                        <ion-card-subtitle> Introducción a Vue</ion-card-subtitle>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>¿Qué es? Vue es un framework de JavaScript ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            </div>
-                            <div class="element">
-                                <ion-card style="height: 180px; margin: 3px 3px 3px 3px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Introducción a la programación</ion-card-title>
-                                        <ion-card-subtitle> Desarrollo web</ion-card-subtitle>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Frontend, Backend y Full-stack  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            </div>
-                            <div class="element">
-                                <ion-card style="height: 180px; margin: 3px 3px 3px 3px;">
-                                    <ion-card-header>
-                                        <ion-card-title>DAM</ion-card-title>
-                                        <ion-card-subtitle>Creación de proyecto </ion-card-subtitle>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Para un proyecto blank: Ejecutar el comando  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            </div>
-                        </div>
-                    </ion-col>
-                </ion-row>
-
-                <ion-row style="margin-top: 45px;">
-                    <ion-col>
-                        <div>
-                            <h4>Tus notas rapidas</h4>
-                        </div>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        <main >
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                            
-                                <ion-card style="height: 125px;">
-                                    <ion-card-header>
-                                        <ion-card-title>Tema Preferecia</ion-card-title>
-                                    </ion-card-header >           
-                                    <ion-card-content>
-                                        <p>Informacion, bla, bla, bla  ... </p>
-                                    </ion-card-content>
-                                </ion-card>
-                        </main>
-                    </ion-col>
-                </ion-row>
-            </div>
-
-        </ion-content>
-        
-        
+        <ion-row>
+          <ion-col> 
+              <div class="carrusel">
+                  <div class="element">
+                    <svg width="70%" height="75%" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="&#240;&#159;&#166;&#134; icon &#34;folder outline&#34;">
+                        <g id="Group">
+                        <path class="color__etiqueta" d="M5 5H28V20H5V5Z" fill="white"/>
+                        <path class="color__etiqueta" d="M28 9H75V20H28V9Z" fill="white"/>
+                        <path id="Vector" d="M69.9921 60.7971H9.56786C7.82595 60.7971 6.15539 60.1052 4.92368 58.8735C3.69197 57.6418 3 55.9712 3 54.2293V9.56786C3 7.82595 3.69197 6.15539 4.92368 4.92368C6.15539 3.69197 7.82595 3 9.56786 3H22.0287C23.3255 3.00003 24.5933 3.38396 25.6722 4.1034L30.2435 7.15089C31.3224 7.87032 32.5902 8.25425 33.887 8.25429H69.9921C71.734 8.25429 73.4046 8.94625 74.6363 10.178C75.868 11.4097 76.56 13.0802 76.56 14.8221V54.2293C76.56 55.9712 75.868 57.6418 74.6363 58.8735C73.4046 60.1052 71.734 60.7971 69.9921 60.7971Z" stroke="white" stroke-width="3.25429" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path id="Vector_2" d="M3 21.39H76.56" stroke="white" stroke-width="3.25429" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        </g>
+                    </svg> 
+                      <p class="texto">Ciencias</p>
+                  </div>
+                  <div class="element">
+                      <img src="../../public/folder.svg" alt="">
+                      <h4 class="texto">Matematias</h4>
+                  </div>
+                  <div class="element">
+                      <img src="../../public/folder.svg" alt="">
+                      <h4 class="texto">DAM</h4>
+                  </div>
+                  <div class="element">
+                      <img src="../../public/folder.svg" alt="">
+                      <p class="texto">Metodologias agiles</p>
+                  </div>
+                  <div class="element">
+                      <img src="../../public/folder.svg" alt="">
+                      <h4 class="texto">Lenguaje</h4>
+                  </div>
+              </div>
+          </ion-col>
+        </ion-row>      
+      </ion-content>
     </ion-page>
-</template>
-
-<script>
-import ComponenteMenu from "../views/ComponenteMenu.vue";
-import { IonPage, IonContent, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton } from "@ionic/vue";
-export default {
+  </template>
+  <script>
+  import { IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol } from "@ionic/vue";
+  import { briefcaseSharp, addOutline, add, documentTextOutline } from 'ionicons/icons';
+  export default {
     name: 'ComponenteInicio',
     components: {
-        ComponenteMenu, IonContent, IonPage, IonRow, IonCol, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton
+      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol
     },
-    data() {
-    return {
-      mensajeSaludo: '',
-    };
-  },
-  mounted() {
-    this.actualizarSaludo();
-  },
-  methods: {
-    actualizarSaludo() {
-      const horaActual = new Date().getHours();
-
-      if (horaActual >= 5 && horaActual < 12) {
-        this.mensajeSaludo = '¡Buenos días!';
-      } else if (horaActual >= 12 && horaActual < 18) {
-        this.mensajeSaludo = '¡Buenas tardes!';
-      } else {
-        this.mensajeSaludo = '¡Buenas noches!';
-      }
+    data(){
+        return {
+            briefcaseSharp,
+            addOutline, add, documentTextOutline,
+            mensajeSaludo: ''
+        }
     },
-  },
-};
-</script>
+    mounted() {
+      this.actualizarSaludo();
+    },
+    methods: {
+      actualizarSaludo() {
+          const horaActual = new Date().getHours();
+  
+          if (horaActual >= 5 && horaActual < 12) {
+              this.mensajeSaludo = '¡Buenos días!';
+          } else if (horaActual >= 12 && horaActual < 18) {
+              this.mensajeSaludo = '¡Buenas tardes!';
+          } else {
+              this.mensajeSaludo = '¡Buenas noches!';
+          }
+      },
+    },
+  }
+  </script>
 
-<style scoped>
-*{
-    font-family: Arial, Helvetica, sans-serif;
-}
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
 
-.carrusel {
+  * {
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .center-container {
     display: flex;
-    flex-wrap: nowrap;
-    overflow: scroll;
-}
-
-.carrusel::-webkit-scrollbar {
-    display: none;
-}
-
-.element {
-    flex: 1 0 auto;
-    margin: 0 10px;
-    background-color: #5F7ABD;
-    width: 190px;
-    height: 190px;
-    border: 1px white solid;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.element:hover{
-    transition: all 0.5s ease;
-    transform:scale(0.9);
-    box-shadow: 0 7px 16px #A2B2EE;
-}
-
-
-main {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    
-}
-@media(max-width:768px){
-    main{
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media(max-width:480px){
-    main{
-        grid-template-columns: repeat(1, 1fr);
-    }
-}
-
-#btnContainer {
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: center; 
     align-items: center;
-}
+    height: 55%; 
+  }
+  
+  .title {
+    font-size: 35px;
+    color: #fff; 
+  }
+  
+  .line {
+    width: 70px; 
+    height: 2px; 
+    background-color: #333; 
+    margin-top: 20px; 
+    animation: pulse 1s infinite alternate; 
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scaleX(2);
+    }
+    100% {
+      transform: scaleX(5.0); 
+    }
+  }
 
-#btnContainer ion-button {
-    margin: 5px;
-    color: black;
-}
-</style>
+  .carrusel {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow: scroll;
+      margin-top: 25px;
+  }
+  
+  .carrusel::-webkit-scrollbar {
+      display: none;
+  }
+  
+  .element {
+      flex: 1 0 auto;
+      margin: 0 10px;
+      width: 115px;
+      height: 135px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: inline-block;
+      text-align: center;
+  }
+   .texto {
+      color: white;
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: small;
+      width: 80%;
+   }
+  .element > img {
+      width: 100%;
+      height: 80%;
+  }
+
+
+    .color__etiqueta {
+        fill: green;
+    }
+  </style>

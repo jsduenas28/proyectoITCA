@@ -25,7 +25,7 @@
                     </div>
                     
                     <div class="input-field">
-                        <ion-button class="input-submit" href="/inicio"> Iniciar sesion</ion-button>
+                        <ion-button class="input-submit" href="/tabs/inicio"> Iniciar sesion</ion-button>
                     </div>
                      
                     <div style="text-align: center; margin-top: 40px;">
