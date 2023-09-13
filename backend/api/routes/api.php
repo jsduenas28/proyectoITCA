@@ -16,5 +16,9 @@ use App\Http\Controllers\Api\UserController;
 */
 
 
-Route::post('/auth/register', [UserController::class, 'createUser']);
+Route::post('/auth/register', [UserController::class, 'registerUser']);
 Route::post('/auth/login', [UserController::class, 'loginUser']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/auth/logout', [UserController::class, 'logoutUser']);
+});
