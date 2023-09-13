@@ -14,18 +14,18 @@
 
                 <div class="input-group">
                     <div class="input-field">
-                        <ion-input labelPlacement="floating">
+                        <ion-input labelPlacement="floating" v-model="loginData.email">
                           <div slot="label">E-mail</div>
                         </ion-input>
                     </div>
                     <div class="input-field">
-                      <ion-input labelPlacement="floating">
+                      <ion-input labelPlacement="floating" v-model="loginData.password">
                           <div slot="label">Contraseña</div>
                         </ion-input>
                     </div>
                     
                     <div class="input-field">
-                        <ion-button class="input-submit" href="/tabs/inicio"> Iniciar sesion</ion-button>
+                        <ion-button class="input-submit" @click="loginUser"> Iniciar sesion</ion-button>
                     </div>
                      
                     <div style="text-align: center; margin-top: 40px;">
@@ -42,32 +42,22 @@
             </div>
             <div class="input-group">
                 <div class="input-field">
-                    <ion-row>
-                      <ion-col>
-                        <ion-input labelPlacement="floating">
-                          <div slot="label">Nombre</div>
-                        </ion-input>
-                      </ion-col>
-
-                      <ion-col>
-                        <ion-input labelPlacement="floating">
-                          <div slot="label">Apellido</div>
-                        </ion-input>
-                      </ion-col>
-                    </ion-row>
+                  <ion-input labelPlacement="floating" v-model="registerData.username">
+                    <div slot="label">Nombre de Usuario</div>
+                  </ion-input>
                 </div>
                 <div class="input-field">
-                  <ion-input labelPlacement="floating">
+                  <ion-input labelPlacement="floating" v-model="registerData.email">
                     <div slot="label">E-mail</div>
                   </ion-input>
                 </div>
                 <div class="input-field">
-                  <ion-input labelPlacement="floating">
+                  <ion-input labelPlacement="floating" v-model="registerData.password">
                     <div slot="label" type="password">Contraseña</div>
                   </ion-input> 
                 </div>
                 <div class="input-field">
-                  <ion-button class="input-submit"> Registrate</ion-button>
+                  <ion-button class="input-submit" @click="registerUser"> Registrate</ion-button>
                 </div>
                 
             </div>
@@ -88,10 +78,26 @@
 
 <script>
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol } from '@ionic/vue';
+import axios from '../api/api.js'
+
 export default {
   name: 'HomePage',
   components: {
     IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol
+  },
+  data() {
+    return  {
+      registerData: {
+        username: '',
+        email:'',
+        password:''
+      },
+
+      loginData: {
+        email: '',
+        password: ''
+      }
+    }
   },
   methods: {
     login() {
@@ -116,6 +122,35 @@ export default {
       y.style.right = '25px';
       z.style.left = '150px';
     },
+
+    registerUser() {
+      axios.post('/api/auth/register', {
+        name: this.registerData['username'],
+        email: this.registerData['email'],
+        password: this.registerData['password'],
+      })
+
+      .then(response => {
+        console.log(response.data); // Maneja la respuesta exitosa aquí
+      })
+      .catch(error => {
+        console.error(error); // Maneja el error aquí
+      });
+    },
+
+    loginUser() {
+      axios.post('/api/auth/login', {
+        email: this.loginData['email'],
+        password: this.loginData['password'],
+      })
+
+      .then(response => {
+        console.log(response.data); // Maneja la respuesta exitosa aquí
+      })
+      .catch(error => {
+        console.error(error); // Maneja el error aquí
+      });
+    }
   }
 }
 </script>
