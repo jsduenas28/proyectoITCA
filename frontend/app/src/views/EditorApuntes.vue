@@ -69,9 +69,16 @@
 
   <br>
 
-  <input type="text" id="title-input" placeholder="¿Cual es el titulo?">
+  <input type="text" id="title-input" placeholder="¿Cual es el titulo?" >
 
-  <editor-content id="editor__content" :editor="editor" />
+  <editor-content id="editor__content" :editor="editor"/>
+
+  <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
+      <img src="../../public/microicon.svg" alt="iniciar" class="micro">
+  </ion-button>
+  <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton">
+      <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
+  </ion-button>
 </template>
     
 <script>
@@ -79,17 +86,202 @@ import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
+import {IonButton, IonImg, IonTextarea} from '@ionic/vue'
+import { Device } from '@capacitor/device';
+import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 
 export default {
     name: 'EditorApuntes',
     components: {
-      EditorContent,
+      EditorContent, IonButton, IonImg, IonTextarea
     },  
     data() {
       return {
         editor: null,
+        vozReconocida: '',
+        recognition: null,
+        infoPlataforma: ''
       }
     },  
+
+    methods: {
+      async verificarPlataforma() {
+          const info = await Device.getInfo();
+          console.log('Información del dispositivo:', info);
+
+          if (info.platform === 'web') {
+              console.log('La aplicación se está ejecutando en un navegador web.');
+              this.infoPlataforma = (info.platform)
+              this.iniciarReconocimientoWeb();
+          } else if (info.platform === 'android' || info.platform === 'ios') {
+              console.log('La aplicación se está ejecutando en un dispositivo móvil (Android o iOS).');
+              this.iniciarReconocimiento();
+          } else {
+              console.log('Plataforma desconocida.');
+              alert('Función no disponible en este dispositivo');
+          }
+      },
+
+      async iniciarReconocimiento() {
+          console.log('Iniciando reconocimiento...');
+          const available = await SpeechRecognition.available();
+          console.log('Dsiponibilidad de reconocimiento:', available);
+
+          if (!available) {
+              console.error('La función de reconocimiento de voz no está disponible en este dispositivo.');
+              return;
+          }
+
+          const permissions = await SpeechRecognition.checkPermissions();
+          console.log('Permisos:', permissions);
+
+          if (permissions && permissions.speechRecognition === 'granted') {
+              try {
+                  const result = await SpeechRecognition.start({
+                      language: 'es-ES',
+                      maxResults: 5,
+                      prompt: 'Di algo',
+                      partialResults: true,
+                      popup: true,
+                  });
+                  
+                  console.log('ESTO ES RESULT: ',result);
+                  this.actualizarTextoReconocido(result.matches[0]);
+
+                  console.log('Reconocimiento iniciado pa.')
+              } catch (error) {
+                  console.error('Error al solicitar el permiso de reconocimiento de voz:', error);
+                  return;
+              }
+          } else{
+              try{
+                  await SpeechRecognition.requestPermissions();
+                  console.log('Permiso de reconocimiento de voz otorgado.');
+                  const result = await SpeechRecognition.start({
+                      language: 'es-ES',
+                      maxResults: 5,
+                      prompt: 'Di algo',
+                      partialResults: true,
+                      popup: true,
+                  });
+                  
+                  this.actualizarTextoReconocido(result.matches[0]);
+              } catch(error){
+                  console.error('Error al solicitar el permiso de reconocimiento de voz:', error);
+              }
+          }
+      },
+
+      actualizarTextoReconocido(texto){
+          //this.vozReconocida += '\n' + texto;
+          const contenidoExistenteMovil = this.editor.getText();
+          const textoReconocidoMovil = '\n' + this.vozReconocida + texto;
+          const nuevoContenidoMovil = `${contenidoExistenteMovil}${textoReconocidoMovil}`;
+
+          this.editor.commands.setContent({
+              type: 'doc',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    {
+                      type: 'text',
+                      text: nuevoContenidoMovil,
+                    },
+                  ],
+                },
+              ],
+            });
+          },
+
+      iniciarReconocimientoWeb(){
+          this.recognition = new webkitSpeechRecognition()
+          this.recognition.lang = 'es-ES'
+          this.recognition.continuous = true
+          this.vozReconocida = '';
+
+          this.recognition.onresult = (event) => {
+              let textoReconocido = this.vozReconocida;
+
+              for (let i = this.ultimoTextoReconocido; i < event.results.length; i++) {
+                  //console.log('TEXTO RECONOCIDO:', event.results[i][0].transcript);
+                  textoReconocido = event.results[i][0].transcript + ' ';
+                  console.log('resultado text: ', textoReconocido);
+              }
+
+              if(!this.reconocimientoIniciado || this.vozReconocida === ''){
+                this.vozReconocida = textoReconocido;
+                const contenidoExistente = this.editor.getText();
+
+                  const textoReconocidoo = this.vozReconocida;
+                  const textoLimpio = textoReconocidoo.trim();
+                  const nuevoContenido = `${contenidoExistente} ${textoLimpio}`;
+
+                  this.editor.commands.setContent({
+                    type: 'doc',
+                    content: [
+                      {
+                        type: 'paragraph',
+                        content: [
+                          {
+                            type: 'text',
+                            text: nuevoContenido,
+                          },
+                        ],
+                      },
+                    ],
+                  });
+
+              } else{
+                  
+                  
+                  const contenidoExistente = this.editor.getText();
+
+                  const textoReconocidoo = textoReconocido;
+                  const textoLimpio = textoReconocidoo.trim();
+                  const nuevoContenido = `${contenidoExistente} ${textoLimpio}`;
+
+                  this.editor.commands.setContent({
+                    type: 'doc',
+                    content: [
+                      {
+                        type: 'paragraph',
+                        content: [
+                          {
+                            type: 'text',
+                            text: nuevoContenido,
+                          },
+                        ],
+                      },
+                    ],
+                  });
+    
+              }
+          }
+
+          this.recognition.onstart = () => {
+              console.log('Reconocimiento de voz iniciado.');
+              this.reconocimientoIniciado = true;
+              this.reconocimientoPausado = false;
+              this.ultimoTextoReconocido = 0;
+          };
+
+          this.recognition.onend = () => {
+              console.log('Reconocimiento de voz finalizado.');
+          };
+
+          this.recognition.start();
+      },
+
+      finalizarReconocimientoWeb(){
+          if(this.recognition){
+              this.recognition.stop();
+              this.reconocimientoIniciado = false;
+              this.recognition = null;
+          }
+      }
+    }, //Aqui termina methods
+
     mounted() {
       this.editor = new Editor({
         extensions: [
@@ -105,6 +297,8 @@ export default {
     beforeUnmount() {
       this.editor.destroy()
     },
+
+
 }
 </script>
 
@@ -204,5 +398,13 @@ export default {
 
   #editor__content {
     border-bottom: 2px solid white;
+  }
+
+  .micro{
+        width: 17px;
+  }
+
+  .ionButton{
+    padding: 10px 5px 5px 0px;
   }
 </style>
