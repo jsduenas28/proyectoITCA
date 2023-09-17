@@ -1,10 +1,12 @@
 <template>
+ 
     <ion-page>
+      <ComponenteMenu/>
       <ion-content class="ion-padding">
         <div class="center-container">
           <h1 class="title"><strong>{{ mensajeSaludo }}</strong></h1>
           <div class="line"></div>
-        </div>
+        </div>  
 
         <div style="display: flex;">
           <ion-icon :icon="briefcaseSharp" size="large" color="ligth"></ion-icon>   
@@ -48,14 +50,16 @@
         </ion-row>      
       </ion-content>
     </ion-page>
+
   </template>
   <script>
   import { IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol } from "@ionic/vue";
   import { briefcaseSharp, addOutline, add, documentTextOutline } from 'ionicons/icons';
+  import  ComponenteMenu  from '../views/ComponenteMenu.vue'
   export default {
     name: 'ComponenteInicio',
     components: {
-      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol
+      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol, ComponenteMenu
     },
     data(){
         return {
@@ -83,7 +87,7 @@
   }
   </script>
 
-  <style>
+  <style >
   @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
 
   * {

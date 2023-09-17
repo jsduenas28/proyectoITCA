@@ -1,4 +1,5 @@
 <template>
+
     <ion-menu content-id="main-content">
       <ion-content >
         <div class="menu-header-bg"></div>
@@ -48,6 +49,7 @@
       <ion-content class="ion-padding"> 
       </ion-content>
     </ion-page>
+ 
   </template>
   
   <script>
@@ -81,8 +83,6 @@
 * {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-
-
 
 .menu-header-bg {
     height: 240px;
