@@ -22,7 +22,6 @@ Route::post('/auth/login', [UserController::class, 'loginUser']);
 
 
 
-
 // Estas rutas necesitan Token de acceso para ser usadas
 Route::middleware(['auth:sanctum'])->group(function () {
     //Logout
@@ -32,7 +31,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/carpeta/index', 'App\Http\Controllers\Api\CarpetaController@index');
     Route::post('/carpeta/store', 'App\Http\Controllers\Api\CarpetaController@store');
     Route::get('/carpeta/edit/{id}', 'App\Http\Controllers\Api\CarpetaController@edit');
-    // el update soloo funciona si le paso los datos en un JSON
+    // el update solo funciona si le paso los datos en un JSON
     Route::put('/carpeta/update/{id}', 'App\Http\Controllers\Api\CarpetaController@update');
     Route::delete('/carpeta/delete/{id}', 'App\Http\Controllers\Api\CarpetaController@destroy');
+
+    // NotaController
+    Route::get('/nota/index', 'App\Http\Controllers\Api\NotaController@index');
+    Route::post('/nota/store', 'App\Http\Controllers\Api\NotaController@store');
+
+    Route::get('/nota/edit/{id}', 'App\Http\Controllers\Api\NotaController@edit');
+    // El update solo funciona si se le pasan los datos dentro de un JSON
+    Route::put('/nota/update/{id}', 'App\Http\Controllers\Api\NotaController@update');
+
+    Route::delete('/nota/delete/{id}', 'App\Http\Controllers\Api\NotaController@destroy');
 });
