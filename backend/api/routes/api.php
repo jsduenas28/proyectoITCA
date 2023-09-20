@@ -21,7 +21,6 @@ Route::post('/auth/register', [UserController::class, 'registerUser']);
 Route::post('/auth/login', [UserController::class, 'loginUser']);
 
 
-
 // Estas rutas necesitan Token de acceso para ser usadas
 Route::middleware(['auth:sanctum'])->group(function () {
     //Logout
@@ -44,4 +43,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/nota/update/{id}', 'App\Http\Controllers\Api\NotaController@update');
 
     Route::delete('/nota/delete/{id}', 'App\Http\Controllers\Api\NotaController@destroy');
+
+    //Generador de Cuestionarios
+    Route::get('/genCuestionario/{id}', 'App\Http\Controllers\Api\GPTController@genCuestionario');
 });
