@@ -5,6 +5,7 @@
       <ion-content class="ion-padding">
         <div class="center-container">
           <h1 class="title"><strong>{{ mensajeSaludo }}</strong></h1>
+          <p>token: {{ token }}</p>
           <div class="line"></div>
         </div>  
 
@@ -56,6 +57,17 @@
   import { IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol } from "@ionic/vue";
   import { briefcaseSharp, addOutline, add, documentTextOutline } from 'ionicons/icons';
   import  ComponenteMenu  from '../views/ComponenteMenu.vue'
+  import axios from '../api/api.js'
+  import { Drivers, Storage } from '@ionic/storage';
+
+  import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver'
+
+  const store = new Storage({
+    driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
+  });
+
+  await store.create()
+
   export default {
     name: 'ComponenteInicio',
     components: {
@@ -65,11 +77,13 @@
         return {
             briefcaseSharp,
             addOutline, add, documentTextOutline,
-            mensajeSaludo: ''
+            mensajeSaludo: '',
+            token: ''
         }
     },
     mounted() {
       this.actualizarSaludo();
+      this.getCarpetas()
     },
     methods: {
       actualizarSaludo() {
@@ -83,7 +97,32 @@
               this.mensajeSaludo = '¡Buenas noches!';
           }
       },
-    },
+      async getCarpetas() {
+        try {
+          await this.obtenerToken()
+          
+          axios.get('/api/carpeta/index', {
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+            }
+          })
+          .then(response => {
+            console.log(response.data)
+          })
+          .catch(error => console.error(error))
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      async obtenerToken() {
+        try {
+          this.token = await store.get('accessToken');
+        } catch (error) {
+          console.error("Error al obtener el token:", error);
+          throw error; // Manejo de errores, si es necesario
+        }
+      }
+    }
   }
   </script>
 

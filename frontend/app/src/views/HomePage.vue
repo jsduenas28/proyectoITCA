@@ -79,6 +79,14 @@
 <script>
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol } from '@ionic/vue';
 import axios from '../api/api.js'
+import { Drivers, Storage } from '@ionic/storage';
+import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+
+const store = new Storage({
+  driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
+});
+
+await store.create()
 
 export default {
   name: 'HomePage',
@@ -145,7 +153,12 @@ export default {
       })
 
       .then(response => {
-        console.log(response.data); // Maneja la respuesta exitosa aquí
+        console.log(response.data);
+        const token = response.data.accessToken
+
+        store.set('accessToken', token)
+
+        this.$router.push({path: '/tabs/inicio'})
       })
       .catch(error => {
         console.error(error); // Maneja el error aquí
