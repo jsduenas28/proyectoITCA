@@ -28,6 +28,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // CarpetaController
     Route::get('/carpeta/index', 'App\Http\Controllers\Api\CarpetaController@index');
+    Route::get('/carpeta/carpetaNota', 'App\Http\Controllers\Api\CarpetaController@carpetaNota');
     Route::post('/carpeta/store', 'App\Http\Controllers\Api\CarpetaController@store');
     Route::get('/carpeta/edit/{id}', 'App\Http\Controllers\Api\CarpetaController@edit');
     // el update solo funciona si le paso los datos en un JSON
@@ -35,7 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/carpeta/delete/{id}', 'App\Http\Controllers\Api\CarpetaController@destroy');
 
     // NotaController
-    Route::get('/nota/index', 'App\Http\Controllers\Api\NotaController@index');
+    Route::get('/nota/index/{id}', 'App\Http\Controllers\Api\NotaController@index');
     Route::post('/nota/store', 'App\Http\Controllers\Api\NotaController@store');
 
     Route::get('/nota/edit/{id}', 'App\Http\Controllers\Api\NotaController@edit');

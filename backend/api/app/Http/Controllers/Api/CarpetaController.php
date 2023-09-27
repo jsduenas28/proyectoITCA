@@ -19,9 +19,12 @@ class CarpetaController extends Controller
         return $carpeta;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function carpetaNota() {
+        $carpetasConNotas = Carpeta::with('notas')->get();
+
+        return $carpetasConNotas;
+    }
+
     public function store(Request $request)
     {
         $user = auth()->user();
