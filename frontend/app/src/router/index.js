@@ -5,11 +5,15 @@ import ComponenteMenu from '../views/ComponenteMenu.vue'
 import ComponenteInicio from '../views/ComponenteInicio.vue'
 import ComponenteEditor from '../views/ComponenteEditor.vue'
 import ComponenteArchivo from '../views/ComponenteArchivo.vue'
+import ComponenteNotas from '../views/ComponenteNotas.vue'
+import ComponenteExamen from '../views/ComponenteExamen.vue'
+import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
+import ComponenteEditarCarpeta from '../views/ComponenteEditarCarpeta.vue'
 
 const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/tabs/inicio'
   },
   {
     path: '/home',
@@ -17,14 +21,34 @@ const routes = [
     component: HomePage
   },
   {
+    path: '/editarCarpeta',
+    name: 'ComponenteEditarCarpeta',
+    component: ComponenteEditarCarpeta
+  },
+  {
     path: '/menu',
     name: 'ComponenteMenu',
     component: ComponenteMenu
   },
   {
+    path: '/notas',
+    name: 'ComponenteNotas',
+    component: ComponenteNotas
+  },
+  {
     path: '/editor',
     name: 'ComponenteEditor',
     component: ComponenteEditor
+  },
+  {
+    path: '/creadorExamen',
+    name: 'ComponenteExamen',
+    component: ComponenteExamen
+  },
+  {
+    path: '/examenCreado',
+    name: 'ComponenteExamenCreado',
+    component: ComponenteExamenCreado
   },
   {
     path: '/tabs/',
