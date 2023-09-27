@@ -6,7 +6,7 @@
                     <ion-icon :icon="add" color="ligth"></ion-icon>
                 </ion-fab-button>
                 <ion-fab-list side="top">
-                <ion-fab-button router-link="/editor">
+                <ion-fab-button href="/editor">
                     <p style="font-size: small; color: aliceblue;">Nota</p>
                 </ion-fab-button>
                 <ion-fab-button>
