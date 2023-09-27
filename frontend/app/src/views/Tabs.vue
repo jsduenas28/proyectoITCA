@@ -6,7 +6,7 @@
                     <ion-icon :icon="add" color="ligth"></ion-icon>
                 </ion-fab-button>
                 <ion-fab-list side="top">
-                <ion-fab-button href="/editor">
+                <ion-fab-button router-link="/editor">
                     <p style="font-size: small; color: aliceblue;">Nota</p>
                 </ion-fab-button>
                 <ion-fab-button>
@@ -31,6 +31,7 @@
 <script>
 import { IonPage, IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet } from '@ionic/vue'
 import { add } from "ionicons/icons";
+
 export default {
     name: 'Tabs',
         components: {
@@ -40,7 +41,7 @@ export default {
         return {
             add
         }
-    } 
+    }
 }
 
 </script>
