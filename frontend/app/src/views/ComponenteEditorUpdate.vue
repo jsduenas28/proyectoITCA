@@ -76,7 +76,9 @@ export default {
             })
             .then(response => {
                 console.log(response.data);
-                this.$router.push({path: '/tabs/archivo'})
+                this.$router.push({path: '/tabs/archivo'}).then(() => {
+                    window.location.reload()
+                })
             })
             .catch(error => console.error(error))
         },

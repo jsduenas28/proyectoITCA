@@ -20,7 +20,8 @@ class CarpetaController extends Controller
     }
 
     public function carpetaNota() {
-        $carpetasConNotas = Carpeta::with('notas')->get();
+        $user = auth()->user();
+        $carpetasConNotas = Carpeta::where('usuario', $user->id)->with('notas')->get();
 
         return $carpetasConNotas;
     }

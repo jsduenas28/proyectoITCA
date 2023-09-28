@@ -5,6 +5,7 @@
       <ion-content class="ion-padding">
         <div class="center-container">
           <h1 class="title"><strong>{{ mensajeSaludo }}</strong></h1>
+          <p>{{ token }}</p>
           <div class="line"></div>
         </div>  
 
