@@ -6,10 +6,10 @@
                     <ion-icon :icon="add" color="ligth"></ion-icon>
                 </ion-fab-button>
                 <ion-fab-list side="top">
-                <ion-fab-button href="/editor">
+                <ion-fab-button href="/crearNotas">
                     <p style="font-size: small; color: aliceblue;">Nota</p>
                 </ion-fab-button>
-                <ion-fab-button>
+                <ion-fab-button href="/crearExamen">
                     <p style="font-size: small; color: aliceblue;">Exam</p>
                 </ion-fab-button>
                 </ion-fab-list>
