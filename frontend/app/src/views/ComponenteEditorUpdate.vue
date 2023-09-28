@@ -9,7 +9,7 @@
                 <ion-title>Editor</ion-title>
 
                 <ion-buttons slot="end">
-                    <ion-button @click="guardarNota">Guardar Nota</ion-button>
+                    <ion-button @click="updateNota">Guardar Nota</ion-button>
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -35,13 +35,15 @@ const store = new Storage({
 store.create()
 
 export default {
-    name: 'EditorPage',
+    name: 'EditorPageUpdate',
     data() {
         return {
             title: '',
             texto: '',
+            carpeta: '',
             numeroDeFilas: 1,
-            token: ''
+            token: '',
+            arrayNota: []
         }
     },
     components: {
@@ -57,22 +59,39 @@ export default {
             // Establecer el número de filas en función de las líneas
             this.numeroDeFilas = lineas;
         },
-        async guardarNota() {
+        async updateNota() {
             await this.obtenerToken()
-            const carpeta = this.$route.params.carpeta
-
-            axios.post('/api/nota/store', {
+            const nota = this.$route.params.nota
+            const data = {
                 titulo_nota: this.title,
                 contenido_nota: this.texto,
-                carpeta: carpeta
-            }, {
+                carpeta: this.carpeta
+            }
+
+            axios.put(`/api/nota/update/${nota}`, JSON.stringify(data), {
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.token
                 }
             })
             .then(response => {
                 console.log(response.data);
-                this.$router.push({path: '/tabs/inicio'})
+                this.$router.push({path: '/tabs/archivo'})
+            })
+            .catch(error => console.error(error))
+        },
+        async getNota() {
+            await this.obtenerToken()
+            const nota = this.$route.params.nota
+
+            axios.get(`/api/nota/edit/${nota}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                }
+            })
+            .then(response => {
+                this.arrayNota = response.data
+                this.llenarCampos()
             })
             .catch(error => console.error(error))
         },
@@ -84,7 +103,16 @@ export default {
                 throw error; // Manejo de errores, si es necesario
             }
         },
-    }
+        llenarCampos() {
+            this.title = this.arrayNota[0]['titulo_nota']
+            this.texto = this.arrayNota[0]['contenido_nota']
+            this.carpeta = this.arrayNota[0]['carpeta']
+        }
+    },
+    mounted() {
+        this.getNota()
+    },
+    
 }
 </script>
 
