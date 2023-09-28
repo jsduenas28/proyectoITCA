@@ -69,9 +69,9 @@
 
   <br>
 
-  <input type="text" id="title-input" placeholder="¿Cual es el titulo?" >
+  <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?" >
 
-  <editor-content id="editor__content" :editor="editor"/>
+  <editor-content id="editor__content" :editor="editor" v-model="texto" />
 
   <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
       <img src="../../public/microicon.svg" alt="iniciar" class="micro">
@@ -97,14 +97,32 @@ export default {
     },  
     data() {
       return {
-        editor: null,
+        title: '',
+        texto: '',
+        editor: '',
         vozReconocida: '',
         recognition: null,
         infoPlataforma: ''
       }
-    },  
-
+    },
+    props: {
+      funcion: Function
+    },
+    watch: {
+      title(newVal) {
+        this.llamarFuncion()
+      },
+      editor(newVal) {
+        
+      }
+    },
     methods: {
+      llamarFuncion() {
+        this.funcion(this.title, this.editor)
+      },
+      guardarTexto() {
+        this.texto = document.getElementById('editor__content')
+      },
       async verificarPlataforma() {
           const info = await Device.getInfo();
           console.log('Información del dispositivo:', info);

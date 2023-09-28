@@ -53,11 +53,12 @@ class CarpetaController extends Controller
      */
     public function update(Request $request)
     {
+        $user = auth()->user();
         $carpeta = Carpeta::findOrFail($request->id);
 
         $carpeta->nombre_carpeta = $request->nombre_carpeta;
         $carpeta->color_carpeta = $request->color_carpeta;
-        $carpeta->usuario = $request->usuario;
+        $carpeta->usuario = $user->id;
 
         $carpeta->save();
 
