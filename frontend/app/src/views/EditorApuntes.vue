@@ -1,6 +1,12 @@
 <template>
   <div id="toolbar-fixed">
     <div v-if="editor" id="toolbar-editor">
+      <ion-button @click="verificarPlataforma" color="primary" class="ionButton" >
+          <img src="../../public/microicon.svg" alt="iniciar" class="micro">
+      </ion-button>
+      <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton">
+          <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
+      </ion-button>
       <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
         p
       </button>
@@ -68,27 +74,23 @@
   </div>
 
   <br>
-
+ 
   <input type="text" id="title-input" placeholder="¿Cual es el titulo?" >
 
-  <editor-content id="editor__content" :editor="editor"/>
+  <editor-content id="editor__content" :editor="editor" />
 
-  <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
-      <img src="../../public/microicon.svg" alt="iniciar" class="micro">
-  </ion-button>
-  <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton">
-      <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
-  </ion-button>
 </template>
     
 <script>
 import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import StarterKit from '@tiptap/starter-kit'
+import Placeholder from '@tiptap/extension-placeholder'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import {IonButton, IonImg, IonTextarea} from '@ionic/vue'
 import { Device } from '@capacitor/device';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
+import { Keyboard } from '@capacitor/keyboard';
 
 export default {
     name: 'EditorApuntes',
@@ -100,9 +102,11 @@ export default {
         editor: null,
         vozReconocida: '',
         recognition: null,
-        infoPlataforma: ''
+        infoPlataforma: '',
+        teclado: false,
       }
     },  
+
 
     methods: {
       async verificarPlataforma() {
@@ -279,7 +283,21 @@ export default {
               this.reconocimientoIniciado = false;
               this.recognition = null;
           }
+      },
+
+      //metodo para el teclado y barra de botones
+      async onInputFocus(){
+        if(this.teclado){
+          document.getElementById('toolbar-fixed').style.transform = 'translateY(-100%)';
+        }
+      },
+
+      async onInputBlur(){
+        if(this.teclado){
+          document.getElementById('toolbar-fixed').style.transform = 'translateY(0)';
+        }
       }
+
     }, //Aqui termina methods
 
     mounted() {
@@ -290,9 +308,26 @@ export default {
             types: ['heading', 'paragraph'],
           }),
           Highlight,
+        
+          Placeholder.configure({
+            placeholder: 'Notas'
+            //emptyNodeText: 'Escribe aquí...',
+        
+          }),
         ],
-        content: '',
+
+        //autofocus: true,
+        content: ''
+      });
+
+      Keyboard.addListener('keyboardDidShow', () =>{
+        this.teclado = true;
+      });
+
+      Keyboard.addListener('keyboardDidHide', () => {
+        this.teclado = false;
       })
+      
     },  
     beforeUnmount() {
       this.editor.destroy()
@@ -302,7 +337,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
+
+    .tiptap p.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
+        float: left;
+        color: #adb5bd;
+        pointer-events: none;
+        height: 0;
+    }
+
   /* Basic editor styles */
   .tiptap {
     margin-top: 1rem;
@@ -367,13 +411,16 @@ export default {
   }
 
   #toolbar-editor button{
+    background-color: #26292B;
     margin: 5px;
-    border: 1px solid white;
+    border: 1px solid #e8eae9ff;
+    color: #e6e8e7ff;
     border-radius: 5px;
-    padding: 5px;
-    font-size: 20px;
+    padding: 8px;
+    font-size: 19px;
     font-family: 'JetBrains Mono';
     display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
   }
 
   #toolbar-editor {
@@ -381,11 +428,15 @@ export default {
   }
 
   #toolbar-fixed {
-    position: sticky; /* Utilizamos position: sticky */
-    top: 0;
+    position: fixed;
+    display: flex;
+    bottom: 0;
     z-index: 1;
-    overflow-x: scroll;
+    width: 95%;
     white-space: nowrap;
+    transition: transform 0.3s ease-in-out;
+    padding: 10px;
+    overflow-x: auto;
   }
 
   #title-input {
@@ -397,7 +448,15 @@ export default {
   }
 
   #editor__content {
-    border-bottom: 2px solid white;
+    /*min-height: 55vh; 
+    border: 1px solid #ccc; 
+    padding: 10px; */
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 80vh !important;
+    padding: 10px !important;
+    margin-bottom: 70px;
+
   }
 
   .micro{
@@ -405,6 +464,10 @@ export default {
   }
 
   .ionButton{
-    padding: 10px 5px 5px 0px;
+    margin: 8px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
   }
 </style>
