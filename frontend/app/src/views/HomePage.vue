@@ -86,7 +86,7 @@ const store = new Storage({
   driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
 });
 
-await store.create()
+store.create()
 
 export default {
   name: 'HomePage',

@@ -38,7 +38,8 @@ import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver'
 const store = new Storage({
   driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
 });
-await store.create()
+
+store.create()
 
 export default {
     name: 'ComponenteArchivo',
@@ -59,27 +60,27 @@ export default {
         },
         async getCarpetas() {
             try {
-            await this.obtenerToken()
+                await this.obtenerToken()
             
-            axios.get('/api/carpeta/carpetaNota', {
-                headers: {
-                    'Authorization': 'Bearer ' + this.token
-                }
-            })
-            .then(response => {
-                this.arrayCarpetas = response.data
-            })
-            .catch(error => console.error(error))
+                axios.get('/api/carpeta/carpetaNota', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.token
+                    }
+                })
+                .then(response => {
+                    this.arrayCarpetas = response.data
+                })
+                .catch(error => console.error(error))
             } catch (error) {
-            console.error(error);
+                console.error(error);
             }
         },
         async obtenerToken() {
             try {
-            this.token = await store.get('accessToken');
+                this.token = await store.get('accessToken');
             } catch (error) {
-            console.error("Error al obtener el token:", error);
-            throw error; // Manejo de errores, si es necesario
+                console.error("Error al obtener el token:", error);
+                throw error; // Manejo de errores, si es necesario
             }
         }
     },
