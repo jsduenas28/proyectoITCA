@@ -6,6 +6,10 @@
                     <ion-back-button></ion-back-button>
                 </ion-buttons>
                 <ion-title>Archivos</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button href="/nuevaCarpeta" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Crear carpeta</ion-button>
+                    <ion-button href="/editarCarpeta" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Editar carpeta</ion-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
@@ -18,7 +22,7 @@
             <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
                 <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
                 <ion-item-group v-if="activeList === i">
-                    <ion-item v-for="(notas, j) in carpeta.notas" :key="j">
+                    <ion-item @click="prueba(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
                         <ion-label>{{ notas.titulo_nota }}</ion-label>
                     </ion-item>
                 </ion-item-group>
@@ -29,7 +33,7 @@
     </ion-page>
 </template>
 <script>
-import { IonPage, IonContent, IonHeader, IonToolbar, IonButton, IonBackButton, IonTitle, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem } from "@ionic/vue";
+import { IonPage, IonContent, IonHeader, IonToolbar, IonButton, IonButtons, IonBackButton, IonTitle, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem } from "@ionic/vue";
 import CarpetaList from '../views/CarpetaList.vue'
 
 import axios from '../api/api.js'
@@ -44,7 +48,7 @@ store.create()
 export default {
     name: 'ComponenteArchivo',
     components: {
-        IonPage, IonContent, IonHeader, IonToolbar, IonButton, IonBackButton, IonTitle, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem, CarpetaList
+        IonPage, IonContent, IonHeader, IonToolbar, IonButton, IonButtons, IonBackButton, IonTitle, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem, CarpetaList
     },
     data(){
         return {
@@ -55,6 +59,9 @@ export default {
         };
     },
     methods: {
+        prueba(id) {
+            this.$router.push({path: `/editorUpdate/${id}`})
+        },
         toggleList(listName) {
           this.activeList = this.activeList === listName ? null : listName;
         },
@@ -82,7 +89,7 @@ export default {
                 console.error("Error al obtener el token:", error);
                 throw error; // Manejo de errores, si es necesario
             }
-        }
+        },
     },
     mounted() {
         this.getCarpetas()

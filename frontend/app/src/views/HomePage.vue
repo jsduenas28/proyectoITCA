@@ -139,7 +139,12 @@ export default {
       })
 
       .then(response => {
-        console.log(response.data); // Maneja la respuesta exitosa aquí
+        console.log(response.data); 
+        const token = response.data.accessToken
+
+        store.set('accessToken', token)
+
+        this.$router.push({path: '/tabs/inicio'})
       })
       .catch(error => {
         console.error(error); // Maneja el error aquí

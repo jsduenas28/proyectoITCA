@@ -8,7 +8,9 @@ import ComponenteArchivo from '../views/ComponenteArchivo.vue'
 import ComponenteExamen from '../views/ComponenteExamen.vue'
 import ComponenteNotas from '../views/ComponenteNotas.vue'
 import ComponenteEditarCarpeta from '../views/ComponenteEditarCarpeta.vue'
+import ComponenteNuevaCarpeta from '../views/ComponenteNuevaCarpeta.vue'
 import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
+import ComponenteEditorUpdate from '../views/ComponenteEditorUpdate.vue'
 
 const routes = [
   {
@@ -26,14 +28,24 @@ const routes = [
     component: ComponenteMenu
   },
   {
-    path: '/editor',
+    path: '/editor/:carpeta',
     name: 'ComponenteEditor',
     component: ComponenteEditor
+  },
+  {
+    path: '/editorUpdate/:nota',
+    name: 'ComponenteEditorUpdate',
+    component: ComponenteEditorUpdate
   },
   {
     path: '/editarCarpeta',
     name: 'ComponenteEditarCarpeta',
     component: ComponenteEditarCarpeta
+  },
+  {
+    path: '/nuevaCarpeta',
+    name: 'ComponenteNuevaCarpeta',
+    component: ComponenteNuevaCarpeta
   },
   {
     path: '/crearExamen',
