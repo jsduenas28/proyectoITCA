@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('nota', function (Blueprint $table) {
             $table->id();
+            $table->string('titulo_nota');
             $table->longText('contenido_nota');
             $table->bigInteger('carpeta')->unsigned();
             $table->foreign('carpeta')->references('id')->on('carpeta')->onDelete('cascade');

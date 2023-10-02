@@ -30,6 +30,16 @@ export default {
     name: 'ComponenteExamen',
     component: {
         IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonContent,
+    },
+    data(){
+        return {
+
+        };
+    },
+    methods: {
+        regresarVista() {
+        window.history.back();
+      }
     }
 }
 </script>

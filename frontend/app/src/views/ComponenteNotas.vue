@@ -6,71 +6,82 @@
                         <ion-button @click="regresarVista" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Cancelar</ion-button>
                     </ion-buttons>
                     <ion-title style="margin-left: 0px;">Nueva Nota</ion-title>
-                    <ion-buttons slot="end">
-                        <ion-button href="/editor" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Crear</ion-button>
-                    </ion-buttons>
                 </ion-toolbar>
             </ion-header>
 
       <ion-content class="ion-padding">
         <div style="text-align: center;">
           <h1>Elige la carpeta donde guardarás tu nota</h1>
-        </div>
+        </div> <br>
          
-          <ion-select v-model="carpetaSeleccionada" placeholder="Selecciona una carpeta" 
-          ok-text="Elige el carpeta" label="Elige tu carpeta" labelPlacement="floating" fill="outline" shape="round" style="margin-top: 25px; margin-bottom: 25px; --highlight-color-focused: #A2B2EE;">
-            <ion-select-option v-for="(carpeta, index) in carpetas" :key="index" :value="carpeta.nombre">
-              {{ carpeta.nombre }}
-            </ion-select-option>
-          </ion-select>
-        
-  
-        
+        <ion-list @click="selectCarpeta(carpeta.id)" :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
+          <CarpetaListNota :color="carpeta.color_carpeta" :name="carpeta.nombre_carpeta" />
+        </ion-list>
+
       </ion-content>
     </ion-page>
   </template>
   
   <script>
-  import { IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonContent, IonInput, IonSelect, IonSelectOption } from "@ionic/vue";
+  import { IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem } from "@ionic/vue";
+  import CarpetaListNota from '../views/CarpetaListNota.vue'
+
+  import axios from '../api/api.js'
+  import { Drivers, Storage } from '@ionic/storage';
+  import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver'
+  const store = new Storage({
+    driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
+  });
+
+  store.create()
+  
   export default {
     name: 'ComponenteNotas',
     components: {
-        IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonContent, IonInput, IonSelect, IonSelectOption
+        IonPage, IonHeader, IonToolbar, IonTitle, IonButton, IonContent, IonInput, IonSelect, IonSelectOption, IonList, IonListHeader, IonLabel, IonItemGroup, IonItem, CarpetaListNota
     },
     data() {
       return {
-        nombreElemento: '',
-        carpetaSeleccionada: '', 
+        token: '',
+        arrayCarpetas: []
       };
-    },
-    props: {
-      carpetas: Array, /*Lista de carpetas desde ComponenteArchivo*/
     },
     methods: {
       regresarVista() {
         window.history.back();
       },
-
-      agregarElemento() {
-        // Valida que se haya ingresado un nombre y seleccionado una carpeta
-        if (this.nombreElemento && this.carpetaSeleccionada) {
-          // Crea un objeto con la información del elemento
-          const nuevoElemento = {
-            nombre: this.nombreElemento,
-            carpeta: this.carpetaSeleccionada,
-          };
-  
-          // emitir al nuevo archivo
-          this.$emit('agregar-elemento', nuevoElemento);
-  
-          // Limpiar campos
-          this.nombreElemento = '';
-          this.carpetaSeleccionada = '';
-        } else {
-          alert('Por favor, complete los campos requeridos.');
+      async getCarpetas() {
+        try {
+          await this.obtenerToken()
+          
+          axios.get('/api/carpeta/index', {
+            headers: {
+                'Authorization': 'Bearer ' + this.token
+            }
+          })
+          .then(response => {
+            this.arrayCarpetas = response.data
+          })
+          .catch(error => console.error(error))
+        } catch (error) {
+          console.error(error);
         }
       },
+      async obtenerToken() {
+        try {
+          this.token = await store.get('accessToken');
+        } catch (error) {
+          console.error("Error al obtener el token:", error);
+          throw error; // Manejo de errores, si es necesario
+        }
+      },
+      selectCarpeta(id) {
+        this.$router.push({path: `/editor/${id}`})
+      }
     },
+    mounted() {
+      this.getCarpetas()
+    }
   };
   </script>
   

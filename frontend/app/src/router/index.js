@@ -5,15 +5,17 @@ import ComponenteMenu from '../views/ComponenteMenu.vue'
 import ComponenteInicio from '../views/ComponenteInicio.vue'
 import ComponenteEditor from '../views/ComponenteEditor.vue'
 import ComponenteArchivo from '../views/ComponenteArchivo.vue'
-import ComponenteNotas from '../views/ComponenteNotas.vue'
 import ComponenteExamen from '../views/ComponenteExamen.vue'
-import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
+import ComponenteNotas from '../views/ComponenteNotas.vue'
 import ComponenteEditarCarpeta from '../views/ComponenteEditarCarpeta.vue'
+import ComponenteNuevaCarpeta from '../views/ComponenteNuevaCarpeta.vue'
+import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
+import ComponenteEditorUpdate from '../views/ComponenteEditorUpdate.vue'
 
 const routes = [
   {
     path: '/',
-    redirect: '/tabs/inicio'
+    redirect: '/home'
   },
   {
     path: '/home',
@@ -21,27 +23,32 @@ const routes = [
     component: HomePage
   },
   {
-    path: '/editarCarpeta',
-    name: 'ComponenteEditarCarpeta',
-    component: ComponenteEditarCarpeta
-  },
-  {
     path: '/menu',
     name: 'ComponenteMenu',
     component: ComponenteMenu
   },
   {
-    path: '/notas',
-    name: 'ComponenteNotas',
-    component: ComponenteNotas
-  },
-  {
-    path: '/editor',
+    path: '/editor/:carpeta',
     name: 'ComponenteEditor',
     component: ComponenteEditor
   },
   {
-    path: '/creadorExamen',
+    path: '/editorUpdate/:nota',
+    name: 'ComponenteEditorUpdate',
+    component: ComponenteEditorUpdate
+  },
+  {
+    path: '/editarCarpeta',
+    name: 'ComponenteEditarCarpeta',
+    component: ComponenteEditarCarpeta
+  },
+  {
+    path: '/nuevaCarpeta',
+    name: 'ComponenteNuevaCarpeta',
+    component: ComponenteNuevaCarpeta
+  },
+  {
+    path: '/crearExamen',
     name: 'ComponenteExamen',
     component: ComponenteExamen
   },
@@ -49,6 +56,11 @@ const routes = [
     path: '/examenCreado',
     name: 'ComponenteExamenCreado',
     component: ComponenteExamenCreado
+  },
+  {
+    path: '/crearNotas',
+    name: 'ComponenteNotas',
+    component: ComponenteNotas
   },
   {
     path: '/tabs/',

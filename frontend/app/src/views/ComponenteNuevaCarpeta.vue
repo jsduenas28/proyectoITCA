@@ -5,19 +5,15 @@
                     <ion-buttons slot="start">
                         <ion-button @click="regresarVista" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Cancelar</ion-button>
                     </ion-buttons>
-                    <ion-title style="margin-left: 0px;">Edita Carpeta</ion-title>
+                    <ion-title style="margin-left: 0px;">Crear una nueva carpeta</ion-title>
                     <ion-buttons slot="end">
-                        <ion-button @click="editarCarpeta" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Editar</ion-button>
+                        <ion-button @click="crearCarpeta" class="ion-margin-top" expand="full" style="color: #A2B2EE;">Crear carpeta</ion-button>
                     </ion-buttons>
                 </ion-toolbar>
             </ion-header>
 
             <ion-content class="ion-padding">
-                <ion-select v-model="carpeta" label="Elige la carpeta" labelPlacement="floating" fill="outline" shape="round">
-                    <ion-select-option v-for="(carpeta, i) in arrayCarpetas" :key="i" :value="carpeta.id">{{ carpeta.nombre_carpeta }}</ion-select-option>
-                </ion-select>
-
-                <ion-input v-model="nombre_carpeta" label="Nombre nuevo" labelPlacement="floating" fill="outline" shape="round" 
+                <ion-input v-model="nombre_carpeta" label="Nombre de la carpeta" labelPlacement="floating" fill="outline" shape="round" 
                     style="--highlight-color-focused: #A2B2EE; margin-top: 40px;"
                 ></ion-input>
 
@@ -52,8 +48,6 @@ export default {
     data(){
         return {
             token: '',
-            arrayCarpetas: [],
-            carpeta: '',
             nombre_carpeta: '',
             color_carpeta: ''
         };
@@ -62,16 +56,14 @@ export default {
         regresarVista() {
             this.$router.push({path: '/tabs/archivo'})
         },
-        async editarCarpeta() {
+        async crearCarpeta() {
             await this.obtenerToken()
-            const datos = {
+
+            axios.post('/api/carpeta/store', {
                 nombre_carpeta: this.nombre_carpeta,
                 color_carpeta: this.color_carpeta
-            }
-
-            axios.put(`/api/carpeta/update/${this.carpeta}`, JSON.stringify(datos), {
+            }, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.token
                 }
             })
@@ -81,23 +73,6 @@ export default {
             })
             .catch(error => console.error(error))
         },
-        async getCarpetas() {
-            try {
-                await this.obtenerToken()
-            
-                axios.get('/api/carpeta/carpetaNota', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.token
-                    }
-                })
-                .then(response => {
-                    this.arrayCarpetas = response.data
-                })
-                .catch(error => console.error(error))
-            } catch (error) {
-                console.error(error);
-            }
-        },
         async obtenerToken() {
             try {
                 this.token = await store.get('accessToken');
@@ -106,10 +81,7 @@ export default {
                 throw error; // Manejo de errores, si es necesario
             }
         }
-    },
-    mounted() {
-        this.getCarpetas()
-    },
+    }
 }
 </script>
 <style>
