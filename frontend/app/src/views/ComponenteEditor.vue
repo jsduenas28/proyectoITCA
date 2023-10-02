@@ -18,6 +18,14 @@
             <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?" > <br><br>
 
             <textarea id="editor__content" v-model="texto" :rows="numeroDeFilas" @input="ajustarAltura" placeholder="Escribe aquí..."></textarea>
+            <div>
+                <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
+                    <img src="../../public/microicon.svg" alt="iniciar" class="micro">
+                </ion-button>
+                <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
+                    <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
+                </ion-button>
+            </div>
         </ion-content>
     </ion-page>
 </template>
@@ -28,6 +36,8 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, Io
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver'
+import { SpeechRecognition } from '@capacitor-community/speech-recognition';
+import { Device } from '@capacitor/device';
 const store = new Storage({
   driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
 });
@@ -41,7 +51,10 @@ export default {
             title: '',
             texto: '',
             numeroDeFilas: 1,
-            token: ''
+            token: '',
+            recognition: null,
+            infoPlataforma: '',
+            mostrarButton: false
         }
     },
     components: {
@@ -84,7 +97,124 @@ export default {
                 throw error; // Manejo de errores, si es necesario
             }
         },
-    }
+
+        async verificarPlataforma() {
+            const info = await Device.getInfo();
+            console.log('Información del dispositivo:', info);
+
+            if (info.platform === 'web') {
+                console.log('La aplicación se está ejecutando en un navegador web.');
+                this.infoPlataforma = (info.platform)
+                this.mostrarButton = true;
+                this.iniciarReconocimientoWeb();
+            } else if (info.platform === 'android' || info.platform === 'ios') {
+                console.log('La aplicación se está ejecutando en un dispositivo móvil (Android o iOS).');
+                this.iniciarReconocimiento();
+            } else {
+                console.log('Plataforma desconocida.');
+                alert('Función no disponible en este dispositivo');
+            }
+        },
+
+         //Esto es para android 
+        async iniciarReconocimiento() {
+            console.log('Iniciando reconocimiento...');
+            const available = await SpeechRecognition.available();
+            console.log('Dsiponibilidad de reconocimiento:', available);
+
+            if (!available) {
+                console.error('La función de reconocimiento de voz no está disponible en este dispositivo.');
+                return;
+            }
+
+            const permissions = await SpeechRecognition.checkPermissions();
+            console.log('Permisos:', permissions);
+
+            if (permissions && permissions.speechRecognition === 'granted') {
+                try {
+                    const result = await SpeechRecognition.start({
+                        language: 'es-ES',
+                        maxResults: 5,
+                        prompt: 'Di algo',
+                        partialResults: true,
+                        popup: true,
+                    });
+                    
+                    this.actualizarTextoReconocido(result.matches[0]);
+                } catch (error) {
+                    console.error('Error al solicitar el permiso de reconocimiento de voz:', error);
+                    return;
+                }
+            } else{
+                try{
+                    await SpeechRecognition.requestPermissions();
+                    console.log('Permiso de reconocimiento de voz otorgado.');
+                    const result = await SpeechRecognition.start({
+                        language: 'es-ES',
+                        maxResults: 5,
+                        prompt: 'Di algo',
+                        partialResults: true,
+                        popup: true,
+                    });
+                    
+                    this.actualizarTextoReconocido(result.matches[0]);
+                } catch(error){
+                    console.error('Error al solicitar el permiso de reconocimiento de voz:', error);
+                }
+            }
+        },
+
+        actualizarTextoReconocido(text){
+            this.texto+= '\n' + text;
+        },
+
+        //Reconocimiento de voz en plataforma web
+        iniciarReconocimientoWeb(){
+            this.recognition = new webkitSpeechRecognition()
+            this.recognition.lang = 'es-ES'
+            this.recognition.continuous = true
+
+            this.recognition.onresult = (event) => {
+                let textoReconocido = this.texto;
+
+                for (let i = this.ultimoTextoReconocido; i < event.results.length; i++) {
+                    console.log(event.results[i][0].transcript);
+                    textoReconocido = event.results[i][0].transcript + ' ';
+                }
+
+                if(!this.reconocimientoIniciado || this.texto === ''){
+                    this.texto += '' + textoReconocido;
+                } else{
+                    this.texto += '' + textoReconocido;
+                }
+
+                //this.ultimoTextoReconocido = event.results.length;                   
+            }
+
+            this.recognition.onstart = () => {
+                console.log('Reconocimiento de voz iniciado.');
+                this.reconocimientoIniciado = true;
+                this.reconocimientoPausado = false;
+                this.ultimoTextoReconocido = 0;
+            };
+
+            this.recognition.onend = () => {
+                console.log('Reconocimiento de voz finalizado.');
+                this.mostrarButton = false;
+            };
+
+            this.recognition.start();
+        },
+
+        finalizarReconocimientoWeb(){
+            if(this.recognition){
+                this.recognition.stop();
+                this.reconocimientoIniciado = false;
+                this.recognition = null;
+            }
+        }
+
+    } //aqui termina methods
 }
 </script>
 
@@ -105,5 +235,13 @@ export default {
 
   #editor__content:focus {
     outline: none;
+  }
+
+  .micro{
+        width: 17px;
+  }
+
+  .ionButton{
+    padding: 10px 5px 5px 0px;
   }
 </style>
