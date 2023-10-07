@@ -53,7 +53,7 @@ const routes = [
     component: ComponenteExamen
   },
   {
-    path: '/examenCreado',
+    path: '/examenCreado/:nota',
     name: 'ComponenteExamenCreado',
     component: ComponenteExamenCreado
   },

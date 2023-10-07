@@ -17,12 +17,25 @@ class GPTController extends Controller
 
         $result = OpenAI::completions()->create([
             'model' => 'text-davinci-003',
+            'temperature' => 1,
+            'top_p' => 1,
             'max_tokens' => 2000,
             'prompt' => '
                 Genera una pregunta usando un texto como contexto para la pregunta, genera tambien las opciones
-                para responder la pregunta, dame de 3 a 4 opciones y dividelas entre 1 correcta y el resto incorrectas,
-                devuelveme todo dentro de un objeto JSON usando las claves pregunta, resCorrecta y resIncorrecta, para las respuestas
-                incorrectas metelas dentro de un array, limitate a crear solo el JSON y llenarlo con la información. Texto:
+                para responder la pregunta, usa el siguiente formato:
+
+                {
+                    "pregunta": "string",
+                    "respuestas": "array" ["string"]
+                    "resCorrecta": "string"
+                }
+
+                agrega la información que generes dentro del formato JSON y retornalo, NO RETORNES NADA
+                QUE NO VAYA A ESTAR DENTRO DEL OBJETO JSON POR FAVOR, no quiero ningun otro tipo de texto
+                fuera del objeto JSON, agrega las respuestas en "respuestas"
+                y separa la respuesta correcta en "resCorrecta", NO PUEDEN HABER COMAS EN "resCorrecta".
+
+                Texto:
             '.$texto
         ]);
 
