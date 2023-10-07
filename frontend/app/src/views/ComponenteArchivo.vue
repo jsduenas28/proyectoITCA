@@ -22,12 +22,11 @@
             <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
                 <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
                 <ion-item-group v-if="activeList === i">
-                    <ion-item @click="prueba(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                    <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
                         <ion-label>{{ notas.titulo_nota }}</ion-label>
                     </ion-item>
                 </ion-item-group>
             </ion-list>
-            
         </ion-content>
         
     </ion-page>
@@ -59,7 +58,7 @@ export default {
         };
     },
     methods: {
-        prueba(id) {
+        editar(id) {
             this.$router.push({path: `/editorUpdate/${id}`})
         },
         toggleList(listName) {
