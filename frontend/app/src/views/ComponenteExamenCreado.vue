@@ -12,14 +12,24 @@
 
         <ion-content class="ion-padding">
             <ion-row>
-                <ion-col><p>{{ objectoRes.pregunta }}</p></ion-col>
+                <ion-col><p>{{ objetoPregunta.question }}</p></ion-col>
             </ion-row>
             <ion-row>
-                    <ion-radio-group allow-empty-selection="true" value="space-between">
-                        <ion-item v-for="(respuestas, i) in objectoRes.respuestas" :key="i">
-                            <ion-radio :value="i" justify="space-between">{{ objectoRes.respuestas }}</ion-radio> 
-                        </ion-item>
-                    </ion-radio-group>
+                <ion-radio-group allow-empty-selection="true" value="space-between">
+                    <ion-item v-for="(respuestas, i) in objetoPregunta.options" :key="i">
+                        <ion-radio :value="respuestas" justify="space-between" @click="seleccionarRes(respuestas)">{{ respuestas }}</ion-radio> 
+                    </ion-item>
+                </ion-radio-group>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <template v-if="(resolverPregunta === false)">
+                        <ion-button @click="validarPregunta">Resolver Pregunta</ion-button>
+                    </template>
+                    <template v-else>
+                        <ion-button @click="generarCuestionario">Siguiente Pregunta</ion-button>
+                    </template>
+                </ion-col>
             </ion-row>
         </ion-content>
     </ion-page>
@@ -43,46 +53,76 @@ export default {
     },
     data() {
         return {
-            objectoRes: '',
-            resMezcladas: [],
-            resSeleccionada: ''
+            objectoRes:  [
+                {
+                    "id": "pDgnjdMzOt9",
+                    "question": "¿Cuál fue la mayor contienda bélica de la historia?",
+                    "answer": "Segunda Guerra Mundial",
+                    "options": ["Primera Guerra Mundial", "Guerra de Vietnam", "Guerra de los Balcanes", "Segunda Guerra Mundial", "Guerra Fría"]
+                },
+                {
+                    "id": "GZG49mXC3Jy",
+                    "question": "¿Cuántos militares se movilizaron en la Segunda Guerra Mundial?",
+                    "answer": "100 millones",
+                    "options": ["100 millones", "50 millones", "70 millones", "80 millones", "120 millones"]
+                },
+                {
+                    "id": "r0SclR9bOYf",
+                    "question": "¿Cuáles fueron las dos alianzas militares enfrentadas en la Segunda Guerra Mundial?",
+                    "answer": "Aliados y Potencias del Eje",
+                    "options": ["Aliados y Comunistas", "Alemania y Francia", "Unión Soviética y Japón", "Aliados y Potencias del Eje", "Estados Unidos y Rusia"]
+                },
+                {
+                    "id": "Tjadx7EYWKL",
+                    "question": "¿Qué reivindicación expansionista llevó a Hitler a invadir Polonia?",
+                    "answer": "El Corredor Polaco",
+                    "options": ["Anexión de Alsacia-Lorena", "El Corredor Polaco", "Anexión de los Sudetes", "Anexión de Austria", "Anexión de Eslovaquia"]
+                },
+                {
+                    "id": "Z9TxfwpFzvN",
+                    "question": "¿Qué técnica militar desarrolló Alemania en la Segunda Guerra Mundial?",
+                    "answer": "Blitzkrieg",
+                    "options": ["Guerra de trincheras", "Guerra de mentira", "Guerra de guerrillas", "Guerra psicológica", "Blitzkrieg"]
+                }
+            ],
+            objetoPregunta: {},
+            indicePreguntaActual: 0,
+            resolverPregunta: false,
+            respuestaSelect: null,
+            respuestasCorrectas: 0
         }
     },
     methods: {
         regresarVista() {
-            window.history.back();
+            this.$router.push('/tabs/inicio')
         },
-        async getCuestionario() {
-            await this.obtenerToken()
-            const nota = this.$route.params.nota
-
-            axios.get(`/api/genCuestionario/${nota}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + this.token
-                }
-            })
-            .then(response => {
-                this.objectoRes = response.data
-                console.log(this.objectoRes)
-            })
-            .catch(error => console.error(error))
-        },
-        async obtenerToken() {
-            try {
-                this.token = await store.get('accessToken');
-            } catch (error) {
-                console.error("Error al obtener el token:", error);
-                throw error; // Manejo de errores, si es necesario
+        generarCuestionario() {
+            if(this.indicePreguntaActual < this.objectoRes.length) {
+                this.respuestaSelect = null
+                this.resolverPregunta = false
+                this.objetoPregunta = this.objectoRes[this.indicePreguntaActual]
+                this.indicePreguntaActual++
+            } else {
+                alert('Respondidas: ' + this.respuestasCorrectas + '/' + this.objectoRes.length)
             }
         },
-        shuffleArray(array) {
-            array.sort(() => Math.random() - 0.5)
+        validarPregunta() {
+            if(this.respuestaSelect == this.objetoPregunta.answer) {
+                alert('Correcto')
+                this.respuestasCorrectas++
+                this.resolverPregunta = true
+            } else {
+                alert('Incorrecto')
+                this.resolverPregunta = true
+            }
+        },
+        seleccionarRes(respuesta) {
+            this.respuestaSelect = respuesta
         }
     },
     mounted() {
-        this.getCuestionario()
-    }
+        this.generarCuestionario()
+    },
 }
 </script>
 <style>
