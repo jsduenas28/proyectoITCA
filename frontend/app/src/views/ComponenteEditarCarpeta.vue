@@ -13,10 +13,6 @@
             </ion-header>
 
             <ion-content class="ion-padding">
-                <ion-select v-model="carpeta" label="Elige la carpeta" labelPlacement="floating" fill="outline" shape="round">
-                    <ion-select-option v-for="(carpeta, i) in arrayCarpetas" :key="i" :value="carpeta.id">{{ carpeta.nombre_carpeta }}</ion-select-option>
-                </ion-select>
-
                 <ion-input v-model="nombre_carpeta" label="Nombre nuevo" labelPlacement="floating" fill="outline" shape="round" 
                     style="--highlight-color-focused: #A2B2EE; margin-top: 40px;"
                 ></ion-input>
@@ -60,7 +56,7 @@ export default {
     },
     methods: {
         regresarVista() {
-            this.$router.push({path: '/tabs/archivo'})
+            this.$router.push({path: '/tabs/inicio'})
         },
         async editarCarpeta() {
             await this.obtenerToken()
@@ -77,21 +73,24 @@ export default {
             })
             .then(response => {
                 console.log(response.data);
-                this.$router.push({path: '/tabs/archivo'})
+                this.$router.push({path: '/tabs/inicio'})
             })
             .catch(error => console.error(error))
         },
         async getCarpetas() {
             try {
                 await this.obtenerToken()
-            
-                axios.get('/api/carpeta/carpetaNota', {
+                const idCarpeta = this.$route.params.id
+                
+                axios.get(`/api/carpeta/edit/${idCarpeta}`, {
                     headers: {
                         'Authorization': 'Bearer ' + this.token
                     }
                 })
                 .then(response => {
-                    this.arrayCarpetas = response.data
+                    this.carpeta = response.data[0].id
+                    this.nombre_carpeta = response.data[0].nombre_carpeta
+                    this.color_carpeta = response.data[0].color_carpeta
                 })
                 .catch(error => console.error(error))
             } catch (error) {

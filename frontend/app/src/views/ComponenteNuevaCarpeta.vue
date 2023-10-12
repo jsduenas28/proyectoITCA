@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         regresarVista() {
-            this.$router.push({path: '/tabs/archivo'})
+            this.$router.push({path: '/tabs/inicio'})
         },
         async crearCarpeta() {
             await this.obtenerToken()
@@ -69,7 +69,7 @@ export default {
             })
             .then(response => {
                 console.log(response.data);
-                this.$router.push({path: '/tabs/archivo'})
+                this.$router.push({path: '/tabs/inicio'})
             })
             .catch(error => console.error(error))
         },
