@@ -18,7 +18,9 @@
             </div>
             
             <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-                <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
+                <ion-list-header>
+                    <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
+                </ion-list-header>
                 <ion-item-group v-if="activeList === i">
                     <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
                         <ion-label>{{ notas.titulo_nota }}</ion-label>

@@ -16,12 +16,6 @@
             </ion-fab>
             <ion-router-outlet></ion-router-outlet>
             <ion-tab-bar slot="bottom">       
-                <ion-tab-button tab="ComponenteInicio" href="/tabs/inicio">
-                    <ion-label><strong>Inicio</strong></ion-label>
-                </ion-tab-button>
-                <ion-tab-button tab="ComponenteArchivo" href="/tabs/archivo">
-                    <ion-label><strong>Archivos</strong></ion-label>
-                </ion-tab-button>
                 
             </ion-tab-bar>
         </ion-tabs>

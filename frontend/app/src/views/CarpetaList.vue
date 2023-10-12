@@ -1,5 +1,7 @@
 <template>
-    <ion-list-header>
+        <ion-button @click="llamarToggleList" style="color: #000; margin-right: 20px; --border-radius: 20px;">
+            {{ llamarToggleList === toggleListName ? '↑' : '↓' }}
+        </ion-button>
         <div style="margin-right: 10px; align-items: center;">
             <svg width="45" height="45" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="&#240;&#159;&#166;&#134; icon &#34;folder outline&#34;">
@@ -13,13 +15,11 @@
             </svg> 
         </div>
         <ion-label><strong style="font-size: medium;">{{ name }}</strong></ion-label>
-        <ion-button @click="llamarToggleList" style="color: #000; margin-right: 20px; --border-radius: 20px;">
-            {{ llamarToggleList === toggleListName ? '↑' : '↓' }}
-        </ion-button>
-    </ion-list-header>
 </template>
 
 <script>
+import { ellipsisHorizontalOutline } from 'ionicons/icons'
+
 export default {
     name: 'CarpetaList',
     props:{
@@ -27,6 +27,11 @@ export default {
         color: '',
         name: '',
         metodoToggleList: Function
+    },
+    data() {
+        return {
+            ellipsisHorizontalOutline
+        }
     },
     methods: {
         llamarToggleList() {

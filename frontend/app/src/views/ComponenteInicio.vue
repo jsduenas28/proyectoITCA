@@ -1,37 +1,48 @@
 <template>
- 
     <ion-page>
-      <ComponenteMenu/>
       <ion-content class="ion-padding">
         <div class="center-container">
           <h1 class="title"><strong>{{ mensajeSaludo }}</strong></h1>
-          <p>{{ token }}</p>
           <div class="line"></div>
         </div>  
 
-        <div style="display: flex;">
-          <ion-icon :icon="briefcaseSharp" size="large" color="ligth"></ion-icon>   
-              <p style="margin-top: 30px; ">Tus carpetas</p> 
-        </div>
+        <ion-list :inset="true" style="border-radius: 20px;">
+          <ion-list-header>
+            <ion-label style="font-size: 20px;">Tus Carpetas</ion-label>
+            <ion-buttons style="margin-right: 10px;">
+              <ion-button @click="irNuevaCarpeta" fill="clear" shape="round"><ion-icon :icon="add"></ion-icon></ion-button>
+            </ion-buttons>
+          </ion-list-header>
+        </ion-list>
 
-        <ion-row>
-          <ion-col> 
-              <div class="carrusel">
-                  <div class="element" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-                      <CarpetaSlider :nombre="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" />
-                  </div>
-              </div>
-          </ion-col>
-        </ion-row>      
+        <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
+            <ion-list-header>
+              <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
+              <ion-buttons style="margin-right: 10px;">
+                  <ion-button @click="setOpen(true, carpeta.id)" shape="round"><ion-icon :icon="ellipsisHorizontalOutline"></ion-icon></ion-button>
+              </ion-buttons>
+            </ion-list-header>
+            <ion-item-group v-if="activeList === i">
+                <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                    <ion-label>{{ notas.titulo_nota }}</ion-label>
+                </ion-item>
+            </ion-item-group>
+          </ion-list>
+
+          <ion-action-sheet
+            :is-open="isOpen"
+            header="Opciones"
+            :buttons="actionSheetButtons"
+            @didDismiss="setOpen(false)"
+          ></ion-action-sheet>
       </ion-content>
     </ion-page>
-
   </template>
   <script>
-  import { IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol } from "@ionic/vue";
-  import { briefcaseSharp, addOutline, add, documentTextOutline } from 'ionicons/icons';
+  import { IonPage, IonContent, IonFab, IonFabButton, IonButton, IonButtons, IonFabList, IonGrid, IonRow, IonCol, IonActionSheet } from "@ionic/vue";
+  import CarpetaList from '../views/CarpetaList.vue'
+  import { briefcaseSharp, addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trashOutline, pencilOutline } from 'ionicons/icons';
   import  ComponenteMenu  from '../views/ComponenteMenu.vue'
-  import CarpetaSlider from '../views/CarpetaSlider.vue'
   import axios from '../api/api.js'
   import { Drivers, Storage } from '@ionic/storage';
 
@@ -46,15 +57,52 @@
   export default {
     name: 'ComponenteInicio',
     components: {
-      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonRow, IonCol, ComponenteMenu, CarpetaSlider
+      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonButton, IonButtons, IonGrid, IonRow, IonCol, IonActionSheet, ComponenteMenu, CarpetaList
     },
     data(){
         return {
+            isOpen: false,
             briefcaseSharp,
-            addOutline, add, documentTextOutline,
+            addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trashOutline, pencilOutline,
             mensajeSaludo: '',
+            activeList: null,
+            arrayCarpetas: [],
+            arrayNotas: [],
             token: '',
-            arrayCarpetas: []
+            idCarpeta: null,
+            actionSheetButtons: [
+            {
+              text: 'Modificar',
+              cssClass: 'editButton',
+              icon: pencilOutline,
+              role: 'destructive',
+              data: {
+                action: 'update',
+              },
+              handler: () => {
+                this.irEditarCarpeta()
+              }
+            },
+            {
+              text: 'Eliminar',
+              cssClass: 'deleteButton',
+              icon: trashOutline,
+              role: 'destructive',
+              data: {
+                action: 'delete',
+              },
+              handler: () => {
+                this.elimiarCarpeta()
+              }
+            },
+            {
+              text: 'Cancelar',
+              role: 'cancel',
+              data: {
+                action: 'cancel',
+              },
+            },
+            ]
         }
     },
     mounted() {
@@ -73,31 +121,64 @@
               this.mensajeSaludo = '¡Buenas noches!';
           }
       },
-      async getCarpetas() {
+      irEditarCarpeta() {
+        this.$router.push({path: `/editarCarpeta/${this.idCarpeta}`})
+      },
+      async elimiarCarpeta() {
         try {
           await this.obtenerToken()
-          
-          axios.get('/api/carpeta/index', {
+
+          axios.delete(`/api/carpeta/delete/${this.idCarpeta}`, {
             headers: {
-                'Authorization': 'Bearer ' + this.token
+              'Authorization': 'Bearer ' + this.token
             }
           })
           .then(response => {
-            this.arrayCarpetas = response.data
+            this.getCarpetas()
           })
           .catch(error => console.error(error))
         } catch (error) {
-          console.error(error);
+          console.error(error)
         }
       },
-      async obtenerToken() {
-        try {
-          this.token = await store.get('accessToken');
-        } catch (error) {
-          console.error("Error al obtener el token:", error);
-          throw error; // Manejo de errores, si es necesario
-        }
-      }
+      editar(id) {
+            this.$router.push({path: `/editorUpdate/${id}`})
+        },
+        toggleList(listName) {
+          this.activeList = this.activeList === listName ? null : listName;
+        },
+        async getCarpetas() {
+            try {
+                await this.obtenerToken()
+            
+                axios.get('/api/carpeta/carpetaNota', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.token
+                    }
+                })
+                .then(response => {
+                    this.arrayCarpetas = response.data
+                })
+                .catch(error => console.error(error))
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async obtenerToken() {
+            try {
+                this.token = await store.get('accessToken');
+            } catch (error) {
+                console.error("Error al obtener el token:", error);
+                throw error; // Manejo de errores, si es necesario
+            }
+        },
+        irNuevaCarpeta() {
+          this.$router.push({path: '/nuevaCarpeta'})
+        },
+        setOpen(bool, id) {
+          this.isOpen = bool
+          this.idCarpeta = id
+        },
     }
   }
   </script>
@@ -178,5 +259,13 @@
 
     .color__etiqueta {
         fill: green;
-    }
+  }
+
+  .editButton {
+    color: green !important;
+  }
+
+  .deleteButton {
+    color: red !important;
+  }
   </style>

@@ -38,7 +38,7 @@ const routes = [
     component: ComponenteEditorUpdate
   },
   {
-    path: '/editarCarpeta',
+    path: '/editarCarpeta/:id',
     name: 'ComponenteEditarCarpeta',
     component: ComponenteEditarCarpeta
   },
