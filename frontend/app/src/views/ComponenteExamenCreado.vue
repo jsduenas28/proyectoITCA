@@ -89,12 +89,62 @@ export default {
             indicePreguntaActual: 0,
             resolverPregunta: false,
             respuestaSelect: null,
-            respuestasCorrectas: 0
+            respuestasCorrectas: 0,
+            contenidoNota: []
         }
     },
     methods: {
         regresarVista() {
             this.$router.push('/tabs/inicio')
+        },
+        async getNota() {
+            try {
+                await this.obtenerToken()
+                const idNota = this.$route.params.nota
+            
+                axios.get(`/api/nota/edit/${idNota}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.token
+                    }
+                })
+                .then(response => {
+                    this.contenidoNota = response.data[0].contenido_nota
+                })
+                .catch(error => console.error(error))
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async obtenerToken() {
+            try {
+                this.token = await store.get('accessToken');
+            } catch (error) {
+                console.error("Error al obtener el token:", error);
+                throw error; // Manejo de errores, si es necesario
+            }
+        },
+        obtenerCuestionario() {
+            const peticion = {
+                "type": "contextBased",
+                "context": "La Segunda Guerra Mundial (también escrito II Guerra Mundial)1​ fue un conflicto militar global que se desarrolló entre 1939 y 1945. En ella se vieron implicadas la mayor parte de las naciones del mundo —incluidas todas las grandes potencias, así como prácticamente todas las naciones europeas— agrupadas en dos alianzas militares enfrentadas: los Aliados, por un lado, y las Potencias del Eje, por otro. Fue la mayor contienda bélica de la historia, con más de 100 millones de militares movilizados y un estado de guerra total en que los grandes contendientes destinaron toda su capacidad económica, militar y científica al servicio del esfuerzo bélico, borrando la distinción entre recursos civiles y militares. Marcada por hechos de enorme repercusión que incluyeron la muerte masiva de civiles (el Holocausto, los bombardeos masivos sobre ciudades y el uso, por primera vez en un conflicto militar, de armas nucleares), la Segunda Guerra Mundial fue la más mortífera de la historia, con un resultado de entre 50 y 70 millones de víctimas, el 2,5 % de la población mundial.2​ ",
+                "questionType": "MCQ",
+                "language": "spanish"
+            }
+
+            var apiKey = "sk20YuH47nKzolYdmxdHDz30CAv58eD"
+
+            axios.post('https://api.opexams.com/questions-generator', JSON.stringify(peticion), {
+                headers: {
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "api-key": apiKey,
+                    "request-type": "test",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                console.log(respose.data)
+            })
+            .catch(error => console.error(error))
         },
         generarCuestionario() {
             if(this.indicePreguntaActual < this.objectoRes.length) {
@@ -121,7 +171,9 @@ export default {
         }
     },
     mounted() {
+        //this.obtenerCuestionario()
         this.generarCuestionario()
+        this.getNota()
     },
 }
 </script>

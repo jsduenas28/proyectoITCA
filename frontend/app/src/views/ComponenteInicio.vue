@@ -67,6 +67,7 @@
             mensajeSaludo: '',
             activeList: null,
             arrayCarpetas: [],
+            cargando: true,
             arrayNotas: [],
             token: '',
             idCarpeta: null,
@@ -104,6 +105,10 @@
             },
             ]
         }
+    },
+    beforeUpdate() {
+      this.actualizarSaludo();
+      this.getCarpetas()
     },
     mounted() {
       this.actualizarSaludo();
