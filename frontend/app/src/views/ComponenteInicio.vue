@@ -15,19 +15,27 @@
           </ion-list-header>
         </ion-list>
 
-        <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-            <ion-list-header>
-              <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
-              <ion-buttons style="margin-right: 10px;">
-                  <ion-button @click="setOpen(true, carpeta.id)" shape="round"><ion-icon :icon="ellipsisHorizontalOutline"></ion-icon></ion-button>
-              </ion-buttons>
-            </ion-list-header>
-            <ion-item-group v-if="activeList === i">
-                <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
-                    <ion-label>{{ notas.titulo_nota }}</ion-label>
-                </ion-item>
-            </ion-item-group>
+        <template v-if="cargando">
+            <div class="contenedorSpinner">
+              <div class="spinner"></div>
+            </div>
+        </template>
+        <template v-else>
+          <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
+              <ion-list-header>
+                <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
+                <ion-buttons style="margin-right: 10px;">
+                    <ion-button @click="setOpen(true, carpeta.id)" shape="round"><ion-icon :icon="ellipsisHorizontalOutline"></ion-icon></ion-button>
+                </ion-buttons>
+              </ion-list-header>
+              <ion-item-group v-if="activeList === i">
+                  <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                      <ion-label>{{ notas.titulo_nota }}</ion-label>
+                  </ion-item>
+              </ion-item-group>
           </ion-list>
+        </template>
+
 
           <ion-action-sheet
             :is-open="isOpen"
@@ -61,6 +69,7 @@
     },
     data(){
         return {
+            cargando: false,
             isOpen: false,
             briefcaseSharp,
             addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trashOutline, pencilOutline,
@@ -155,7 +164,8 @@
         async getCarpetas() {
             try {
                 await this.obtenerToken()
-            
+
+                this.cargando = true
                 axios.get('/api/carpeta/carpetaNota', {
                     headers: {
                         'Authorization': 'Bearer ' + this.token
@@ -165,6 +175,7 @@
                     this.arrayCarpetas = response.data
                 })
                 .catch(error => console.error(error))
+                .then(() => this.cargando = false)
             } catch (error) {
                 console.error(error);
             }
@@ -272,5 +283,26 @@
 
   .deleteButton {
     color: red !important;
+  }
+
+  .contenedorSpinner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Ajusta esto según tus necesidades */
+  }
+
+  .spinner {
+    width: 11.2px;
+    height: 11.2px;
+    border-radius: 11.2px;
+    box-shadow: 28px 0px 0 0 rgba(71,75,255,0.2), 22.7px 16.5px 0 0 rgba(71,75,255,0.4), 8.68px 26.6px 0 0 rgba(71,75,255,0.6), -8.68px 26.6px 0 0 rgba(71,75,255,0.8), -22.7px 16.5px 0 0 #474bff;
+    animation: spinner-b87k6z 1s infinite linear;
+  }
+
+  @keyframes spinner-b87k6z {
+    to {
+        transform: rotate(360deg);
+    }
   }
   </style>

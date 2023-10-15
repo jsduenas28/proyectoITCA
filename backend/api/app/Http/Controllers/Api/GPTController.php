@@ -16,13 +16,14 @@ class GPTController extends Controller
         $response = $client->post('https://api.opexams.com/questions-generator', [
             'headers' => [
                 'Content-Type' => 'application/json',
-                'api-key' => 'sk20YuH47nKzolYdmxdHDz30CAv58eD'
+                'api-key' => 'sk20YuH47nKzolYdmxdHDz30CAv58eD',
+                'request-type' => 'test'
             ],
             'json' => [
                 "type" => "contextBased",
                 "context" => $nota,
                 "questionType" => "MCQ",
-                "language"=> "spanish"
+                "language"=> "spanish",
             ]
         ]);
 
