@@ -15,23 +15,68 @@
         </ion-header>
 
         <ion-content class="ion-padding">
-            <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?" > <br><br>
-
-            <textarea id="editor__content" v-model="texto" :rows="numeroDeFilas" @input="ajustarAltura" placeholder="Escribe aquí..."></textarea>
-            <div>
-                <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
-                    <img src="../../public/microicon.svg" alt="iniciar" class="micro">
-                </ion-button>
-                <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
-                    <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
-                </ion-button>
+            <div class="contenido">
+                <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?"> <br><br>
+    
+                <editor-content ref="editor" :editor="editor" class="editor" @input="handleInput" />
+    
+                <div>
+                    <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
+                        <img src="../../public/microicon.svg" alt="iniciar" class="micro">
+                    </ion-button>
+                    <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
+                        <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
+                    </ion-button>
+                </div>
             </div>
         </ion-content>
+
+        <div v-if="editor" id="editorBtn">
+                <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+                    <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+                    <svg-icon type="mdi" :path="mdiFormatItalic"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+                    <svg-icon type="mdi" :path="mdiFormatStrikethroughVariant"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+                    <svg-icon type="mdi" :path="mdiFormatParagraph"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+                    <svg-icon type="mdi" :path="mdiFormatHeader1 "></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+                    <svg-icon type="mdi" :path="mdiFormatHeader2"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+                    <svg-icon type="mdi" :path="mdiFormatListBulleted"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
+                    <svg-icon type="mdi" :path="mdiFormatListNumbered"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
+                    <svg-icon type="mdi" :path="mdiCodeBraces"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
+                    <svg-icon type="mdi" :path="mdiArrowULeftTop"></svg-icon>
+                </button>
+                <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
+                    <svg-icon type="mdi" :path="mdiArrowURightTop"></svg-icon>
+                </button>
+        </div>
     </ion-page>
 </template>
 
 <script>
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, IonButtons, IonButton } from '@ionic/vue'
+
+import { Editor, EditorContent } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop} from '@mdi/js';
 
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
@@ -48,27 +93,35 @@ export default {
     name: 'EditorPage',
     data() {
         return {
+            mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop,
+
+            editor: new Editor( {
+                extensions: [
+                    StarterKit
+                ],
+                content: ''
+            }),
             title: '',
             texto: '',
             numeroDeFilas: 1,
             token: '',
             recognition: null,
             infoPlataforma: '',
-            mostrarButton: false
+            mostrarButton: false,
         }
     },
     components: {
-        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, IonButtons, IonButton
+        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, IonButtons, IonButton, EditorContent, SvgIcon
+    },
+    beforeUnmount() {
+        this.editor.destroy()
     },
     methods: {
+        handleInput() {
+            this.texto = this.editor.getHTML()
+        },
         regresarVista() {
             window.history.back();
-        },
-        ajustarAltura() {
-            // Dividir el texto en líneas y contar cuántas líneas hay
-            const lineas = this.texto.split('\n').length;
-            // Establecer el número de filas en función de las líneas
-            this.numeroDeFilas = lineas;
         },
         async guardarNota() {
             await this.obtenerToken()
@@ -214,7 +267,7 @@ export default {
             }
         }
 
-    } //aqui termina methods
+    }
 }
 </script>
 
@@ -243,5 +296,24 @@ export default {
 
   .ionButton{
     padding: 10px 5px 5px 0px;
+  }
+
+  #editorBtn {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: auto;
+  }
+
+
+  #editorBtn button{
+    padding: 20px;
+    margin: 5px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 10px;
   }
 </style>
