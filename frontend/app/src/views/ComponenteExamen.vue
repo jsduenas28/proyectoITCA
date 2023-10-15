@@ -16,17 +16,24 @@
                 <ion-label style="font-size: 25px; text-align: center  ;"><strong>Seleccione una nota para generar un cuestionario</strong></ion-label>
                 <div class="line"></div>
             </div>
-            
-            <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-                <ion-list-header>
-                    <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
-                </ion-list-header>
-                <ion-item-group v-if="activeList === i">
-                    <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
-                        <ion-label>{{ notas.titulo_nota }}</ion-label>
-                    </ion-item>
-                </ion-item-group>
-            </ion-list>
+
+            <template v-if="cargando">
+                <div class="contenedorSpinner">
+                    <div class="spinner"></div>
+                </div>
+            </template>
+            <template v-else>
+                <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
+                    <ion-list-header>
+                        <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
+                    </ion-list-header>
+                    <ion-item-group v-if="activeList === i">
+                        <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                            <ion-label>{{ notas.titulo_nota }}</ion-label>
+                        </ion-item>
+                    </ion-item-group>
+                </ion-list>
+            </template> 
         </ion-content>
         
     </ion-page>
@@ -54,12 +61,13 @@ export default {
             activeList: null,
             arrayCarpetas: [],
             arrayNotas: [],
-            token: ''
+            token: '',
+            cargando: false
         };
     },
     methods: {
         regresarVista() {
-            window.history.back();
+            this.$router.push('/tabs/inicio')
         },
         editar(id) {
             this.$router.push({path: `/examenCreado/${id}`})
@@ -70,7 +78,8 @@ export default {
         async getCarpetas() {
             try {
                 await this.obtenerToken()
-            
+                this.cargando = true
+                
                 axios.get('/api/carpeta/carpetaNota', {
                     headers: {
                         'Authorization': 'Bearer ' + this.token
@@ -80,6 +89,7 @@ export default {
                     this.arrayCarpetas = response.data
                 })
                 .catch(error => console.error(error))
+                .then(() => {this.cargando = false})
             } catch (error) {
                 console.error(error);
             }
@@ -98,7 +108,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
   @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
 
 * {
@@ -111,6 +121,27 @@ export default {
     justify-content: center; 
     align-items: center;
     height: 15%; 
+}
+
+.contenedorSpinner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Ajusta esto según tus necesidades */
+}
+
+.spinner {
+  width: 11.2px;
+  height: 11.2px;
+  border-radius: 11.2px;
+  box-shadow: 28px 0px 0 0 rgba(71,75,255,0.2), 22.7px 16.5px 0 0 rgba(71,75,255,0.4), 8.68px 26.6px 0 0 rgba(71,75,255,0.6), -8.68px 26.6px 0 0 rgba(71,75,255,0.8), -22.7px 16.5px 0 0 #474bff;
+  animation: spinner-b87k6z 1s infinite linear;
+}
+
+@keyframes spinner-b87k6z {
+  to {
+      transform: rotate(360deg);
+  }
 }
 
 </style>
