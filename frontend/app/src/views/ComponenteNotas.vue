@@ -13,10 +13,18 @@
         <div style="text-align: center;">
           <h1>Elige la carpeta donde guardarás tu nota</h1>
         </div> <br>
+
+        <template v-if="cargando">
+            <div class="contenedorSpinner">
+              <div class="spinner"></div>
+            </div>
+        </template>
+        <template v-else>
+          <ion-list @click="selectCarpeta(carpeta.id)" :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
+            <CarpetaListNota :color="carpeta.color_carpeta" :name="carpeta.nombre_carpeta" />
+          </ion-list>
+        </template>
          
-        <ion-list @click="selectCarpeta(carpeta.id)" :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-          <CarpetaListNota :color="carpeta.color_carpeta" :name="carpeta.nombre_carpeta" />
-        </ion-list>
 
       </ion-content>
     </ion-page>
@@ -43,7 +51,8 @@
     data() {
       return {
         token: '',
-        arrayCarpetas: []
+        arrayCarpetas: [],
+        cargando: false
       };
     },
     methods: {
@@ -53,7 +62,7 @@
       async getCarpetas() {
         try {
           await this.obtenerToken()
-          
+          this.cargando = true
           axios.get('/api/carpeta/index', {
             headers: {
                 'Authorization': 'Bearer ' + this.token
@@ -63,6 +72,7 @@
             this.arrayCarpetas = response.data
           })
           .catch(error => console.error(error))
+          .then(() => {this.cargando = false})
         } catch (error) {
           console.error(error);
         }
@@ -91,5 +101,26 @@
 * {
   font-family: 'Open Sans', sans-serif;
 }
-  </style>
+
+.contenedorSpinner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Ajusta esto según tus necesidades */
+  }
+
+  .spinner {
+    width: 11.2px;
+    height: 11.2px;
+    border-radius: 11.2px;
+    box-shadow: 28px 0px 0 0 rgba(71,75,255,0.2), 22.7px 16.5px 0 0 rgba(71,75,255,0.4), 8.68px 26.6px 0 0 rgba(71,75,255,0.6), -8.68px 26.6px 0 0 rgba(71,75,255,0.8), -22.7px 16.5px 0 0 #474bff;
+    animation: spinner-b87k6z 1s infinite linear;
+  }
+
+  @keyframes spinner-b87k6z {
+    to {
+        transform: rotate(360deg);
+    }
+  }
+</style>
   
