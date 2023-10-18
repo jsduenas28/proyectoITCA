@@ -15,23 +15,9 @@
         </ion-header>
 
         <ion-content class="ion-padding">
-            <div class="contenido">
-                <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?"> <br><br>
+            <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?"> <br><br>
     
-                <editor-content ref="editor" :editor="editor" class="editor" @input="handleInput" />
-    
-                <div>
-                    <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
-                        <img src="../../public/microicon.svg" alt="iniciar" class="micro">
-                    </ion-button>
-                    <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
-                        <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
-                    </ion-button>
-                </div>
-            </div>
-        </ion-content>
-
-        <div v-if="editor" id="editorBtn">
+            <div v-if="editor" id="editorBtn">
                 <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
                     <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
                 </button>
@@ -65,7 +51,19 @@
                 <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
                     <svg-icon type="mdi" :path="mdiArrowURightTop"></svg-icon>
                 </button>
-        </div>
+            </div>
+            <editor-content ref="editor" :editor="editor" class="editor" @input="handleInput" />
+    
+            <div>
+                <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
+                    <img src="../../public/microicon.svg" alt="iniciar" class="micro">
+                </ion-button>
+                <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
+                    <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
+                </ion-button>
+            </div>
+
+        </ion-content>
     </ion-page>
 </template>
 
@@ -74,6 +72,7 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton, Io
 
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import Placeholder from '@tiptap/extension-placeholder'
 
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop} from '@mdi/js';
@@ -97,7 +96,10 @@ export default {
 
             editor: new Editor( {
                 extensions: [
-                    StarterKit
+                    StarterKit,
+                    Placeholder.configure({
+                        placeholder: 'Escribe tus apuntes aquí...'
+                    })
                 ],
                 content: ''
             }),
@@ -271,7 +273,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     #title-input {
     width: 100%;
     font-size: 36px;
@@ -300,20 +302,28 @@ export default {
 
   #editorBtn {
     width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    position: sticky;
+    top: 0;
+    background-color: #121212;
     display: flex;
     flex-wrap: nowrap;
     overflow: auto;
+    z-index: 1;
   }
 
-
   #editorBtn button{
-    padding: 20px;
+    padding: 10px;
     margin: 5px;
-    background: transparent;
+    background-color: #121212;
     border: 2px solid white;
     border-radius: 10px;
   }
+
+  .tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #adb5bd;
+    pointer-events: none;
+    height: 0;
+    }
 </style>
