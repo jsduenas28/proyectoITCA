@@ -3,7 +3,7 @@
         <ion-tabs>
             <ion-fab slot="fixed" vertical="bottom" horizontal="center">
                 <ion-fab-button>
-                    <ion-icon :icon="add" color="ligth"></ion-icon>
+                    <ion-icon :icon="arrowUp" color="ligth"></ion-icon>
                 </ion-fab-button>
                 <ion-fab-list side="top">
                 <ion-fab-button href="/crearNotas">
@@ -15,25 +15,24 @@
                 </ion-fab-list>
             </ion-fab>
             <ion-router-outlet></ion-router-outlet>
-            <ion-tab-bar slot="bottom">       
-                
+            <ion-tab-bar slot="bottom">         
             </ion-tab-bar>
         </ion-tabs>
     </ion-page>
 </template>
 
 <script>
-import { IonPage, IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet } from '@ionic/vue'
-import { add } from "ionicons/icons";
+import { IonPage, IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet, IonIcon, } from '@ionic/vue'
+import { add, arrowUp } from "ionicons/icons";
 
 export default {
     name: 'Tabs',
         components: {
-        IonPage, IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet
+        IonPage, IonTabs, IonTabBar, IonTabButton, IonLabel, IonRouterOutlet, IonIcon,
     },
     data() {
         return {
-            add
+            add, arrowUp
         }
     }
 }
@@ -41,13 +40,7 @@ export default {
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
-
-* {
-  font-family: 'Open Sans', sans-serif;
-}
-
-ion-label {
-    font-size: 15px;
-}
+    ion-fab-button {
+        --border-radius: 15px;
+    }
 </style>
