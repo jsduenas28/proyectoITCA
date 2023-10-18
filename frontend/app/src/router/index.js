@@ -11,6 +11,7 @@ import ComponenteEditarCarpeta from '../views/ComponenteEditarCarpeta.vue'
 import ComponenteNuevaCarpeta from '../views/ComponenteNuevaCarpeta.vue'
 import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
 import ComponenteEditorUpdate from '../views/ComponenteEditorUpdate.vue'
+import ComponenteUsuario from '../views/ComponenteUsuario.vue'
 
 const routes = [
   {
@@ -61,6 +62,11 @@ const routes = [
     path: '/crearNotas',
     name: 'ComponenteNotas',
     component: ComponenteNotas
+  },
+  {
+    path: '/usuario',
+    name: 'ComponenteUsuario',
+    component: ComponenteUsuario
   },
   {
     path: '/tabs/',

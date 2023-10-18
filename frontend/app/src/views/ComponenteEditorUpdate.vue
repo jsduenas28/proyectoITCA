@@ -110,7 +110,7 @@ export default {
             this.texto = this.editor.getHTML()
         },
         regresarVista() {
-            window.history.back();
+            this.$router.push({path: '/tabs/inicio'})
         },
         async updateNota() {
             await this.obtenerToken()
@@ -128,10 +128,7 @@ export default {
                 }
             })
             .then(response => {
-                console.log(response.data);
-                this.$router.push({path: '/tabs/inicio'}).then(() => {
-                    window.location.reload()
-                })
+                this.$router.push({path: '/tabs/inicio', query: {showNotaUpdate: 'true'}})
             })
             .catch(error => console.error(error))
         },

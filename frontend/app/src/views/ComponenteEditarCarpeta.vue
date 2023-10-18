@@ -72,8 +72,7 @@ export default {
                 }
             })
             .then(response => {
-                console.log(response.data);
-                this.$router.push({path: '/tabs/inicio'})
+                this.$router.push({path: '/tabs/inicio', query: {showCarpetaUpdate: 'true'}})
             })
             .catch(error => console.error(error))
         },

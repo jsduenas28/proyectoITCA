@@ -68,8 +68,7 @@ export default {
                 }
             })
             .then(response => {
-                console.log(response.data);
-                this.$router.push({path: '/tabs/inicio'})
+                this.$router.push({path: '/tabs/inicio', query: {showCarpetaCreate: 'true'}})
             })
             .catch(error => console.error(error))
         },

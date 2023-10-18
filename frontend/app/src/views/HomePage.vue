@@ -2,6 +2,20 @@
   <ion-page>
 
     <ion-content class="ion-padding" :fullscreen="true">
+
+      <template v-if="showSesionCerrada === true">
+          <div class="alertSesionCerrada">
+            <h1>Parece que la sesion expiro</h1>
+            <p>Por favor vuelve a Iniciar Sesión</p>
+          </div>
+      </template>
+
+      <template v-if="showLogoutAlert === true">
+          <div class="alertLogout">
+            <h1>Cerraste la sesión anterior</h1>
+            <p>Por favor vuelve a Iniciar Sesión</p>
+          </div>
+      </template>
       
       <div class="container">
         <div class="box">
@@ -77,8 +91,9 @@
 </template>
 
 <script>
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol, IonIcon } from '@ionic/vue';
 import axios from '../api/api.js'
+
 import { Drivers, Storage } from '@ionic/storage';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
@@ -91,7 +106,7 @@ store.create()
 export default {
   name: 'HomePage',
   components: {
-    IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol
+    IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol, IonIcon
   },
   data() {
     return  {
@@ -104,10 +119,27 @@ export default {
       loginData: {
         email: '',
         password: ''
-      }
+      },
+      showSesionCerrada: false,
+      showLogoutAlert: false
+    }
+  },
+  created() {
+    if(this.$route.query.showValidacion === 'true') {
+        this.alertSesionCerrada()
+    }
+
+    if(this.$route.query.showLogout === 'true') {
+      this.alertLogout()
     }
   },
   methods: {
+    alertSesionCerrada() {
+      this.showSesionCerrada = true
+    },
+    alertLogout() {
+      this.showLogoutAlert = true
+    },
     login() {
       event.preventDefault();
       
@@ -320,5 +352,21 @@ export default {
 ion-button {
   --background: #A2B2EE;
   --border-color: #fff;
+}
+
+.alertSesionCerrada {
+    width: 100%;
+    background-color: rgb(77, 76, 76);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.alertLogout {
+    width: 100%;
+    background-color: rgb(77, 76, 76);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
 }
 </style>

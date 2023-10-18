@@ -17,6 +17,12 @@ class UserController extends Controller
      * @param Request $request
      * @return User
      */
+    public function index() {
+        $user = auth()->user();
+
+        return response()->json(['data' => $user]);
+    }
+
     public function registerUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
