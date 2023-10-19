@@ -57,7 +57,7 @@
     },
     methods: {
       regresarVista() {
-        window.history.back();
+        this.$router.push({path: '/tabs/inicio'})
       },
       async getCarpetas() {
         try {

@@ -1,7 +1,7 @@
 <template>
   <ion-app>
     <ComponenteMenu></ComponenteMenu>
-    <ion-router-outlet/>
+    <ion-router-outlet :key="$route.fullPath"/>
   </ion-app>
 </template>
 

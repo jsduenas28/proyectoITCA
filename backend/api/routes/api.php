@@ -26,6 +26,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Logout
     Route::get('/auth/logout', [UserController::class, 'logoutUser']);
 
+    //Validación
+    Route::get('/auth/validarToken', 'App\Http\Controllers\Api\AccessTokenController@validarToken');
+
+    //UserController
+    Route::get('/user/index', 'App\Http\Controllers\Api\UserController@index');
+
     // CarpetaController
     Route::get('/carpeta/index', 'App\Http\Controllers\Api\CarpetaController@index');
     Route::get('/carpeta/carpetaNota', 'App\Http\Controllers\Api\CarpetaController@carpetaNota');
