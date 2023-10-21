@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 class AccessTokenController extends Controller
 {
     public function validarToken() {
+        //validación
         $user = auth()->user();
 
         if ($user == null) {
