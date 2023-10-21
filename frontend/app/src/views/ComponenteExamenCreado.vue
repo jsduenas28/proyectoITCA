@@ -33,26 +33,25 @@
                             <div class="cardOptions">
                                 <ion-row>
                                     <ion-col>
-                                        <h2>{{ indicePreguntaActual }}/{{ cantPreguntas }}</h2>
+                                        <template v-if="estadoRes === ''">
+                                            <div class="bannerRes">
+                                                <h2>{{ indicePreguntaActual }}/{{ cantPreguntas }}</h2>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <ion-col>
+                                                <div class="bannerRes" v-if="estadoRes === 'Correcto'" style="background-color: green;">
+                                                    <h2>{{ estadoRes }}</h2>
+                                                </div>
+                                                <div class="bannerRes" v-if="estadoRes === 'Incorrecto'" style="background-color: red;">
+                                                    <h2>{{ estadoRes }}</h2>
+                                                </div>
+                                            </ion-col>
+                                        </template>
                                     </ion-col>
                                 </ion-row>
                                 <ion-row>
                                     <ion-col><h2>{{ objetoPregunta.question }}</h2></ion-col>
-                                </ion-row>
-                                <ion-row>
-                                    <template v-if="estadoRes === ''">
-                                        
-                                    </template>
-                                    <template v-else>
-                                        <ion-col>
-                                            <div class="bannerRes" v-if="estadoRes === 'Correcto'" style="background-color: green;">
-                                                <h2>{{ estadoRes }}</h2>
-                                            </div>
-                                            <div class="bannerRes" v-if="estadoRes === 'Incorrecto'" style="background-color: red;">
-                                                <h2>{{ estadoRes }}</h2>
-                                            </div>
-                                        </ion-col>
-                                    </template>
                                 </ion-row>
                                 <ion-row>
                                     <ion-col>
@@ -191,7 +190,11 @@ export default {
     },
 }
 </script>
-<style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
     .cardOptions {
         border-radius: 10px;
         text-align: center;
@@ -235,6 +238,6 @@ export default {
 
     .bannerRes {
         border-radius: 5px;
-        padding: 1px;
+        padding: 5px;
     }
 </style>

@@ -9,42 +9,42 @@
         <template v-if="showCarpetaActualizada === true">
           <div class="alertCarpetaUpdate">
             <ion-icon :icon="informationOutline" size="large" color="white"></ion-icon>
-            <h1>Carpeta actualizada con éxito</h1>
+            <h3>Carpeta actualizada con éxito</h3>
           </div>
         </template>
 
         <template v-if="showCarpetaCreada === true">
           <div class="alertCarpetaCreate">
             <ion-icon :icon="informationOutline" size="large" color="white"></ion-icon>
-            <h1>Carpeta creada con éxito</h1>
+            <h3>Carpeta creada con éxito</h3>
           </div>
         </template>
 
         <template v-if="showNotaActualizada === true">
           <div class="alertNotaUpdate">
             <ion-icon :icon="informationOutline" size="large" color="white"></ion-icon>
-            <h1>Nota actualizada con éxito</h1>
+            <h3>Nota actualizada con éxito</h3>
           </div>
         </template>
 
         <template v-if="showNotaCreada === true">
           <div class="alertNotaCreada">
             <ion-icon :icon="informationOutline" size="large" color="white"></ion-icon>
-            <h1>Nota creada con éxito</h1>
+            <h3>Nota creada con éxito</h3>
           </div>
         </template>
 
         <template v-if="mostrarAlertSuccess === true">
           <div class="alertSuccess">
             <ion-icon :icon="checkmark" size="large" color="white"></ion-icon>
-            <h1>Acción completada con éxito</h1>
+            <h3>Acción completada con éxito</h3>
           </div>
         </template>
 
         <template v-if="mostrarAlertElimina === true">
           <div class="alertEliminar">
             <div>
-              <h1>¿Seguro que quieres eliminar la {{ item }}?</h1>
+              <h3>¿Seguro que quieres eliminar la {{ item }}?</h3>
             </div>
 
             <div class="btnAlert">
@@ -365,11 +365,10 @@
   </script>
 
   <style >
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
-
-  * {
-    font-family: 'Open Sans', sans-serif;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
 
   .center-container {
     display: flex;
@@ -490,6 +489,21 @@
     padding: 5px;
     text-align: center;
   }
+
+  .alertEliminar h3 {
+    margin-left: 10px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertEliminar {
+      display: block;
+      width: 100%;
+      background-color: red;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
   
   .alertSuccess{
     display: flex;
@@ -523,6 +537,7 @@
     padding: 5px;
     text-align: center;
   }
+
 
   .alertCarpetaCreate {
     display: flex;

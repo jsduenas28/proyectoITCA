@@ -13,11 +13,16 @@
             </ion-header>
 
             <ion-content class="ion-padding">
-                <ion-input v-model="nombre_carpeta" label="Nombre nuevo" labelPlacement="floating" fill="outline" shape="round" 
-                    style="--highlight-color-focused: #A2B2EE; margin-top: 40px;"
-                ></ion-input>
+                <div class="alert" v-if="alertValidacion === true">
+                    <h3>Todos los campos deben de ser rellenados</h3>
+                    <button @click="() => {alertValidacion = false}"><ion-icon :icon="close" color="white" size="small"></ion-icon></button>
+                </div>
 
-                <ion-select v-model="color_carpeta" label="Elige el color de tu carpeta" labelPlacement="floating" fill="outline" shape="round" style="margin-top: 10px;">
+                <ion-input v-model="nombre_carpeta" label="Nombre nuevo" labelPlacement="floating" fill="outline"
+                    style="--highlight-color-focused: #A2B2EE; margin-top: 40px;"
+                ></ion-input> <br>
+
+                <ion-select v-model="color_carpeta" label="Elige el color de tu carpeta" labelPlacement="floating" fill="outline" interface="action-sheet" style="margin-top: 10px;">
                     <ion-select-option value="red">Rojo</ion-select-option>
                     <ion-select-option value="blue">Azul</ion-select-option>
                     <ion-select-option value="green">Verde</ion-select-option>
@@ -30,6 +35,8 @@
 </template>
 <script>
 import { IonPage, IonHeader, IonToolbar, IonButton, IonButtons, IonContent, IonSelect, IonSelectOption, IonInput } from "@ionic/vue";
+
+import { close, } from 'ionicons/icons';
 
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
@@ -47,11 +54,13 @@ export default {
     },
     data(){
         return {
+            close,
             token: '',
             arrayCarpetas: [],
             carpeta: '',
             nombre_carpeta: '',
-            color_carpeta: ''
+            color_carpeta: '',
+            alertValidacion: false
         };
     },
     methods: {
@@ -59,22 +68,26 @@ export default {
             this.$router.push({path: '/tabs/inicio'})
         },
         async editarCarpeta() {
-            await this.obtenerToken()
-            const datos = {
-                nombre_carpeta: this.nombre_carpeta,
-                color_carpeta: this.color_carpeta
-            }
-
-            axios.put(`/api/carpeta/update/${this.carpeta}`, JSON.stringify(datos), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.token
+            if(this.nombre_carpeta === '' || this.color_carpeta === '') {
+                this.alertValidacion = true
+            } else {
+                await this.obtenerToken()
+                const datos = {
+                    nombre_carpeta: this.nombre_carpeta,
+                    color_carpeta: this.color_carpeta
                 }
-            })
-            .then(response => {
-                this.$router.push({path: '/tabs/inicio', query: {showCarpetaUpdate: 'true'}})
-            })
-            .catch(error => console.error(error))
+    
+                axios.put(`/api/carpeta/update/${this.carpeta}`, JSON.stringify(datos), {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + this.token
+                    }
+                })
+                .then(response => {
+                    this.$router.push({path: '/tabs/inicio', query: {showCarpetaUpdate: 'true'}})
+                })
+                .catch(error => console.error(error))
+            }
         },
         async getCarpetas() {
             try {
@@ -110,6 +123,30 @@ export default {
     },
 }
 </script>
-<style>
-    
+<style scoped>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
+
+    .alert {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background-color: red;
+        border-radius: 10px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .alert h3 {
+        margin-left: 20px;
+    }
+
+    .alert button {
+        margin: 5px;
+        border-radius: 10px;
+        background: transparent;
+    }
 </style>
