@@ -1,7 +1,7 @@
 // api.js
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000'; // Reemplaza con la URL de tu API
+axios.defaults.baseURL = 'https://api-laravel-production-9dcf.up.railway.app'; // Reemplaza con la URL de tu API
 axios.defaults.withCredentials = true; // Configura las credenciales
 
 export default axios;

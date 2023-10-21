@@ -13,9 +13,9 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["../app/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/main.js", "src/router/index.js"],
+  "include": ["src/**/*.js", "src/**/*.d.js", "src/**/*.jsx", "src/**/*.vue", "../app/src/main.js", "../app/src/router/index.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
