@@ -15,6 +15,11 @@
         </ion-header>
 
         <ion-content class="ion-padding">
+            <div class="alert" v-if="alertValidacion === true">
+                <h3>No puedes guardar una nota vacia</h3>
+                <button @click="() => {alertValidacion = false}"><ion-icon :icon="close" color="white" size="small"></ion-icon></button>
+            </div>
+            <br>
             <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?"> <br><br>
     
             <div v-if="editor" id="editorBtn">
@@ -76,6 +81,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop} from '@mdi/js';
+import { close, } from 'ionicons/icons';
 
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
@@ -93,7 +99,7 @@ export default {
     data() {
         return {
             mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop,
-
+            close,
             editor: new Editor( {
                 extensions: [
                     StarterKit,
@@ -110,6 +116,7 @@ export default {
             recognition: null,
             infoPlataforma: '',
             mostrarButton: false,
+            alertValidacion: false
         }
     },
     components: {
@@ -126,22 +133,26 @@ export default {
             window.history.back();
         },
         async guardarNota() {
-            await this.obtenerToken()
-            const carpeta = this.$route.params.carpeta
-
-            axios.post('/api/nota/store', {
-                titulo_nota: this.title,
-                contenido_nota: this.texto,
-                carpeta: carpeta
-            }, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.token
-                }
-            })
-            .then(response => {
-                this.$router.push({path: '/tabs/inicio', query: {showNotaCreate: 'true'}})
-            })
-            .catch(error => console.error(error))
+            if(this.title === '' || this.texto === '') {
+                this.alertValidacion = true
+            } else {
+                await this.obtenerToken()
+                const carpeta = this.$route.params.carpeta
+    
+                axios.post('/api/nota/store', {
+                    titulo_nota: this.title,
+                    contenido_nota: this.texto,
+                    carpeta: carpeta
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.token
+                    }
+                })
+                .then(response => {
+                    this.$router.push({path: '/tabs/inicio', query: {showNotaCreate: 'true'}})
+                })
+                .catch(error => console.error(error))
+            }
         },
         async obtenerToken() {
             try {
@@ -273,6 +284,11 @@ export default {
 </script>
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
+
     #title-input {
     width: 100%;
     font-size: 36px;
@@ -324,5 +340,26 @@ export default {
     color: #adb5bd;
     pointer-events: none;
     height: 0;
+    }
+
+    .alert {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background-color: red;
+        border-radius: 10px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .alert h3 {
+        margin-left: 20px;
+    }
+
+    .alert button {
+        margin: 5px;
+        border-radius: 10px;
+        background: transparent;
     }
 </style>

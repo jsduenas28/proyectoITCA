@@ -13,7 +13,7 @@
             <template v-if="mostrarAlertConfirmacion === true">
                 <div class="alert">
                     <div>
-                        <h1>¿Seguro que quieres cerrar sesión?</h1>
+                        <h3>¿Seguro que quieres cerrar sesión?</h3>
                     </div>
                     <div class="btnDiv">
                         <button @click="logout" style="background-color: green;"><ion-icon :icon="checkmark" color="white" size="small"></ion-icon></button>
@@ -30,27 +30,24 @@
             <template v-else>
                 <ion-list :inset="true" style="border-radius: 20px;">
                     <ion-list-header>
-                        <ion-label style="font-size: 30px;">Usuario</ion-label>
+                        <ion-label style="font-size: 18px;">Usuario</ion-label>
                         <div style="margin-right: 40px;">
-                            <h4>{{ usuario.name }}</h4>
+                            <p>{{ usuario.name }}</p>
                         </div>
                     </ion-list-header>
                 </ion-list>
                 <ion-list :inset="true" style="border-radius: 20px;">
                     <ion-list-header>
-                        <ion-label style="font-size: 30px;">Email</ion-label>
+                        <ion-label style="font-size: 18px;">Email</ion-label>
                         <div style="margin-right: 40px;">
-                            <h4>{{ usuario.email }}</h4>
+                            <p>{{ usuario.email }}</p>
                         </div>
                     </ion-list-header>
                 </ion-list>
                 <ion-list :inset="true" style="border-radius: 20px;">
-                    <ion-list-header>
-                        <ion-label></ion-label>
-                        <div style="margin-right: 40px;">
-                            <button @click="alertLogout" id="logoutBtn">Cerrar Sesión</button>
-                        </div>
-                    </ion-list-header>
+                    <div class="divLogout">
+                        <button @click="alertLogout" id="logoutBtn">Cerrar Sesión</button>
+                    </div>
                 </ion-list>
             </template>
         </ion-content>
@@ -142,6 +139,11 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
+
     .contenedorSpinner{
     display: flex;
     justify-content: center;
@@ -181,8 +183,29 @@ export default {
     text-align: center;
   }
 
+  @media screen and (max-width: 600px) {
+    .alert {
+      display: block;
+      width: 100%;
+      background-color: red;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
+
+  .alert h3 {
+    margin-left: 20px;
+  }
+
   .btnDiv button{
     margin: 5px;
     border-radius: 10px;
+  }
+
+  .divLogout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>

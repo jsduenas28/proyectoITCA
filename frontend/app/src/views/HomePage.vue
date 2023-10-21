@@ -16,6 +16,26 @@
             <p>Por favor vuelve a Iniciar Sesión</p>
           </div>
       </template>
+
+      <template v-if="showLoginAlert === true">
+          <div class="alertLogin">
+            <h1>Inicio de sesión fallido</h1>
+            <p>Verifica tus credenciales e intenta de nuevo</p>
+          </div>
+      </template>
+
+      <template v-if="showRegisterAlert === true">
+          <div class="alertRegister">
+            <h1>El registro fallo</h1>
+            <p>Verifica las credenciales e intenta de nuevo</p>
+          </div>
+      </template>
+
+      <template v-if="alertValidación === true">
+          <div class="alertValidación">
+            <h1>Todos los campos deben de ser rellenados</h1>
+          </div>
+      </template>
       
       <div class="container">
         <div class="box">
@@ -28,12 +48,12 @@
 
                 <div class="input-group">
                     <div class="input-field">
-                        <ion-input labelPlacement="floating" v-model="loginData.email">
+                        <ion-input labelPlacement="floating" type="email" v-model="loginData.email">
                           <div slot="label">E-mail</div>
                         </ion-input>
                     </div>
                     <div class="input-field">
-                      <ion-input labelPlacement="floating" v-model="loginData.password">
+                      <ion-input labelPlacement="floating" v-model="loginData.password" type="password">
                           <div slot="label">Contraseña</div>
                         </ion-input>
                     </div>
@@ -61,19 +81,19 @@
                   </ion-input>
                 </div>
                 <div class="input-field">
-                  <ion-input labelPlacement="floating" v-model="registerData.email">
-                    <div slot="label">E-mail</div>
+                  <ion-input labelPlacement="floating" type="email" v-model="registerData.email">
+                    <div slot="label" type="email">E-mail</div>
                   </ion-input>
                 </div>
                 <div class="input-field">
-                  <ion-input labelPlacement="floating" v-model="registerData.password">
+                  <ion-input labelPlacement="floating" type="password" v-model="registerData.password">
                     <div slot="label" type="password">Contraseña</div>
                   </ion-input> 
+                  <span v-if="passwordAlert === true" style="color: red;">La contraseña debe contener al menos 8 caracteres</span>
                 </div>
                 <div class="input-field">
                   <ion-button class="input-submit" @click="registerUser"> Registrate</ion-button>
                 </div>
-                
             </div>
         </div>
         <!------------------------ Switch -------------------------->
@@ -121,7 +141,11 @@ export default {
         password: ''
       },
       showSesionCerrada: false,
-      showLogoutAlert: false
+      showLogoutAlert: false,
+      showLoginAlert: false,
+      showRegisterAlert: false,
+      alertValidación: false,
+      passwordAlert: false
     }
   },
   created() {
@@ -136,9 +160,17 @@ export default {
   methods: {
     alertSesionCerrada() {
       this.showSesionCerrada = true
+      this.showLoginAlert = false
+      this.showLogoutAlert = false
+      this.showValidacion = false
+      this.showRegisterAlert = false
     },
     alertLogout() {
       this.showLogoutAlert = true
+      this.showSesionCerrada = false
+      this.showLogoutAlert = false
+      this.showValidacion = false
+      this.showRegisterAlert = false
     },
     login() {
       event.preventDefault();
@@ -164,42 +196,73 @@ export default {
     },
 
     registerUser() {
-      axios.post('/api/auth/register', {
-        name: this.registerData['username'],
-        email: this.registerData['email'],
-        password: this.registerData['password'],
-      })
-
-      .then(response => {
-        console.log(response.data); 
-        const token = response.data.accessToken
-
-        store.set('accessToken', token)
-
-        this.$router.push({path: '/tabs/inicio'})
-      })
-      .catch(error => {
-        console.error(error); // Maneja el error aquí
-      });
+      if(this.registerData['username'] === '' || this.registerData['email'] === '' || this.registerData['password'] === '') {
+        this.alertValidación = true
+        this.showLoginAlert = false
+        this.showSesionCerrada = false
+        this.showLogoutAlert = false
+        this.showRegisterAlert = false
+      } else {
+        if(this.registerData['password'].length < 8) {
+          this.passwordAlert = true
+        } else {
+          axios.post('/api/auth/register', {
+            name: this.registerData['username'],
+            email: this.registerData['email'],
+            password: this.registerData['password'],
+          })
+    
+          .then(response => {
+            console.log(response.data); 
+            const token = response.data.accessToken
+    
+            store.set('accessToken', token)
+    
+            this.$router.push({path: '/tabs/inicio'})
+          })
+          .catch(error => {
+            this.showRegisterAlert = true
+            this.showLogoutAlert = false
+            this.showSesionCerrada = false
+            this.showLogoutAlert = false
+            this.showValidacion = false
+          });
+        }
+      }
     },
 
     loginUser() {
-      axios.post('/api/auth/login', {
-        email: this.loginData['email'],
-        password: this.loginData['password'],
-      })
+      if(this.loginData['email'] === '' || this.loginData['password'] === '') {
+        this.alertValidación = true
+        this.showLoginAlert = false
+        this.showSesionCerrada = false
+        this.showLogoutAlert = false
+        this.showRegisterAlert = false
+      } else {
+        axios.post('/api/auth/login', {
+          email: this.loginData['email'],
+          password: this.loginData['password'],
+        })
+  
+        .then(response => {
+          console.log(response.data);
+          const token = response.data.accessToken
+  
+          store.set('accessToken', token)
+  
+          this.$router.push({path: '/tabs/inicio'})
+        })
+        .catch(error => {
+          this.alertValidación = false
+          this.showLoginAlert = true
+          this.showSesionCerrada = false
+          this.showLogoutAlert = false
+          this.showRegisterAlert = false
 
-      .then(response => {
-        console.log(response.data);
-        const token = response.data.accessToken
-
-        store.set('accessToken', token)
-
-        this.$router.push({path: '/tabs/inicio'})
-      })
-      .catch(error => {
-        console.error(error); // Maneja el error aquí
-      });
+          this.loginData['email'] = ''
+          this.loginData['password'] = ''
+        });
+      }
     }
   }
 }
@@ -365,6 +428,30 @@ ion-button {
 .alertLogout {
     width: 100%;
     background-color: rgb(77, 76, 76);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.alertLogin {
+    width: 100%;
+    background-color: red;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.alertValidación {
+    width: 100%;
+    background-color: red;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.alertRegister {
+    width: 100%;
+    background-color: red;
     border-radius: 10px;
     padding: 10px;
     text-align: center;

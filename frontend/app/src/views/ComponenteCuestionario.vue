@@ -21,7 +21,11 @@ export default {
 </script>
 
 <style scoped>
-    .card {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+  *{
+      font-family: 'Poppins',sans-serif;
+    }
+.card {
         border-radius: 10px;
         text-align: center;
         padding: 20px;
