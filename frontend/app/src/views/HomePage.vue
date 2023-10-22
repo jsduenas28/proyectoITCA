@@ -36,8 +36,12 @@
             <h1>Todos los campos deben de ser rellenados</h1>
           </div>
       </template>
+
+      <div v-if="verificandoSesion === true">
+        <ComponentePantallaCarga />
+      </div>
       
-      <div class="container">
+      <div class="container" v-else>
         <div class="box">
             <!------------------ Inicio de sesion --------------------->
             <div class="box-login" id="login">
@@ -114,6 +118,8 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol, IonIcon } from '@ionic/vue';
 import axios from '../api/api.js'
 
+import ComponentePantallaCarga from '../views/ComponentePantallaCarga.vue'
+
 import { Drivers, Storage } from '@ionic/storage';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
@@ -126,7 +132,7 @@ store.create()
 export default {
   name: 'HomePage',
   components: {
-    IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol, IonIcon
+    IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonRow, IonCol, IonIcon, ComponentePantallaCarga
   },
   data() {
     return  {
@@ -145,19 +151,39 @@ export default {
       showLoginAlert: false,
       showRegisterAlert: false,
       alertValidación: false,
-      passwordAlert: false
+      passwordAlert: false,
+      verificandoSesion: false
     }
   },
   created() {
     if(this.$route.query.showValidacion === 'true') {
         this.alertSesionCerrada()
     }
-
-    if(this.$route.query.showLogout === 'true') {
-      this.alertLogout()
-    }
+  },
+  mounted() {
+    this.validarLogin()
   },
   methods: {
+    async validarLogin() {
+        this.verificandoSesion = true
+        const token = await store.get('accessToken');
+        try {
+          axios.get('/api/auth/validarToken', {
+              headers: {
+                  'Authorization': 'Bearer ' + token
+              }
+          })
+          .then(response => {
+            this.$router.push({path: '/tabs/inicio'})
+            this.verificandoSesion = false
+          })
+          .catch(error => {
+          })
+          .then(() => this.verificandoSesion = false)
+        } catch (error) {
+          console.log(error)
+        }
+      },
     alertSesionCerrada() {
       this.showSesionCerrada = true
       this.showLoginAlert = false
@@ -456,4 +482,29 @@ ion-button {
     padding: 10px;
     text-align: center;
 }
+
+.pantallaCarga {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+  .contenedorSpinner{
+    height: 100%; /* Ajusta esto según tus necesidades */
+  }
+
+  .spinner {
+    width: 11.2px;
+    height: 11.2px;
+    border-radius: 11.2px;
+    box-shadow: 28px 0px 0 0 rgba(71,75,255,0.2), 22.7px 16.5px 0 0 rgba(71,75,255,0.4), 8.68px 26.6px 0 0 rgba(71,75,255,0.6), -8.68px 26.6px 0 0 rgba(71,75,255,0.8), -22.7px 16.5px 0 0 #474bff;
+    animation: spinner-b87k6z 1s infinite linear;
+  }
+
+  @keyframes spinner-b87k6z {
+    to {
+        transform: rotate(360deg);
+    }
+  }
 </style>
