@@ -24,11 +24,15 @@
             <br>
             
             <div v-if="editor" id="editorBtn">
-                <div class="divAction">
-                    <button @click="takePhoto()" class="buttonAction"> 
-                        <img src="../../public/camara.png" alt="logoScanner" class="logoScan">
-                    </button>
-                </div>
+                <button @click="takePhoto()"  :disabled="isLoading"> 
+                    <svg-icon type="mdi" :path="mdiCameraOutline"></svg-icon>
+                </button>
+                <button @click="verificarPlataforma()">
+                    <svg-icon type="mdi" :path="mdiMicrophone"></svg-icon>
+                </button>
+                <button v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb()"  v-show="mostrarButton">
+                    <svg-icon type="mdi" :path="mdiCloseCircleOutline"></svg-icon>
+                </button>
                 <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
                     <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
                 </button>
@@ -67,15 +71,13 @@
             <editor-content ref="editor" :editor="editor" class="editor" @input="handleInput" />
     
             <div>
+                <!--
                 <ion-button @click="verificarPlataforma" color="primary" class="ionButton">
                     <img src="../../public/microicon.svg" alt="iniciar" class="micro">
                 </ion-button>
                 <ion-button :color="'danger'" v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb" class="ionButton" v-show="mostrarButton">
                     <ion-img src="../../public/cancelicon.svg" class="micro"></ion-img>
-                </ion-button>
-                <ion-button @click="chooseImage()" :disabled="isLoading" class="ionButton" color="primary">
-                    ESCANEAR
-                </ion-button>
+                </ion-button>-->
                 <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
             </div>
 
@@ -91,7 +93,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop} from '@mdi/js';
+import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline} from '@mdi/js';
 import { close, } from 'ionicons/icons';
 
 import axios from '../api/api.js'
@@ -110,7 +112,7 @@ export default {
     name: 'EditorPage',
     data() {
         return {
-            mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop,
+            mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline,
             close,
             editor: new Editor( {
                 extensions: [
@@ -267,6 +269,7 @@ export default {
                   },
                 ],
             });
+            this.handleInput();
         },
 
         //Reconocimiento de voz en plataforma web
@@ -306,6 +309,7 @@ export default {
                         },
                       ],
                     });
+                    this.handleInput();
                 } else{
                     const contenidoExistente = this.editor.getText();
   
@@ -327,6 +331,8 @@ export default {
                         },
                       ],
                     });
+
+                    this.handleInput();
                 }
 
                 //this.ultimoTextoReconocido = event.results.length;                   
@@ -351,7 +357,10 @@ export default {
             if(this.recognition){
                 this.recognition.stop();
                 this.reconocimientoIniciado = false;
-                this.recognition = null;
+                setTimeout(() => {
+                    this.recognition = null;
+                }, 1000);
+                
             }
         },
 
@@ -374,6 +383,9 @@ export default {
                     quality: 95,
                     allowEditing: false,
                     resultType: CameraResultType.Uri,
+                    promptLabelHeader: 'Fotos',
+                    promptLabelPhoto: 'Seleccionar Fotografia',
+                    promptLabelPicture: 'Tomar Fotografia'
                 });
                 this.cameraImage = image.webPath;
                 return image;
@@ -461,6 +473,7 @@ export default {
                     });
 
                     this.isLoading = false;
+                    this.handleInput();
                 })
                 .catch((error) => {
                     console.error('Error', error);
@@ -518,18 +531,6 @@ export default {
     background: radial-gradient(circle, white,  #000);
   }
 
-.buttonAction{
-    width: 50px;
-    border: 2px solid white;
-    border-radius: 10px;
-    background-color: #121212;
-    padding: 5px;
-}
-
-.divAction{
-    display: flex;
-    width: 62px;
-}
 
   #editorBtn {
     width: 100%;
