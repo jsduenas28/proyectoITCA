@@ -27,8 +27,7 @@ class BusquedaController extends Controller
         $nota = Nota::join('carpeta', 'nota.carpeta', '=', 'carpeta.id')
                     ->where('carpeta.usuario', '=', $user->id)
                     ->where(function ($query) use ($palabra) {
-                        $query->where('nota.titulo_nota', 'like', '%'. $palabra .'%')
-                            ->orWhere('nota.contenido_nota', 'like', '%'. $palabra .'%');
+                        $query->where('nota.titulo_nota', 'like', '%'. $palabra .'%');
                     })
                     ->select('nota.*')
                     ->get();

@@ -12,6 +12,7 @@ import ComponenteNuevaCarpeta from '../views/ComponenteNuevaCarpeta.vue'
 import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
 import ComponenteEditorUpdate from '../views/ComponenteEditorUpdate.vue'
 import ComponenteUsuario from '../views/ComponenteUsuario.vue'
+import ComponenteBusqueda from '../views/ComponenteBusqueda.vue'
 
 const routes = [
   {
@@ -67,6 +68,11 @@ const routes = [
     path: '/usuario',
     name: 'ComponenteUsuario',
     component: ComponenteUsuario
+  },
+  {
+    path: '/busqueda',
+    name: 'ComponenteBusqueda',
+    component: ComponenteBusqueda
   },
   {
     path: '/tabs/',
