@@ -15,63 +15,72 @@
         </ion-header>
 
         <ion-content class="ion-padding">
-            <div class="alert" v-if="alertValidacion === true">
-                <h3>Debes llenar todos los campos para modificar una nota</h3>
-                <button @click="() => {alertValidacion = false}"><ion-icon :icon="close" color="white" size="small"></ion-icon></button>
-            </div>
-            <br>
-            <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?" > <br><br>
+            <template v-if="cargandoNota === true">
+                <h1 style="text-align: center;">Cargando tus apuntes</h1>
+                <div class="contenedorSpinner">
+                    <div class="spinner"></div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="alert" v-if="alertValidacion === true">
+                    <h3>Debes llenar todos los campos para modificar una nota</h3>
+                    <button @click="() => {alertValidacion = false}"><ion-icon :icon="close" color="white" size="small"></ion-icon></button>
+                </div>
+                <br>
+                <span>última actualización: {{ fecha }}</span>
+                <input type="text" v-model="title" id="title-input" placeholder="¿Cual es el titulo?" > <br><br>
 
-            <div v-if="editor" id="editorBtn">
-                <button @click="takePhoto()"  :disabled="isLoading"> 
-                    <svg-icon type="mdi" :path="mdiCameraOutline"></svg-icon>
-                </button>
-                <button @click="verificarPlataforma()">
-                    <svg-icon type="mdi" :path="mdiMicrophone"></svg-icon>
-                </button>
-                <button v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb()"  v-show="mostrarButton">
-                    <svg-icon type="mdi" :path="mdiCloseCircleOutline"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-                    <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-                    <svg-icon type="mdi" :path="mdiFormatItalic"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-                    <svg-icon type="mdi" :path="mdiFormatStrikethroughVariant"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
-                    <svg-icon type="mdi" :path="mdiFormatParagraph"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-                    <svg-icon type="mdi" :path="mdiFormatHeader1 "></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-                    <svg-icon type="mdi" :path="mdiFormatHeader2"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
-                    <svg-icon type="mdi" :path="mdiFormatListBulleted"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
-                    <svg-icon type="mdi" :path="mdiFormatListNumbered"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
-                    <svg-icon type="mdi" :path="mdiCodeBraces"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
-                    <svg-icon type="mdi" :path="mdiArrowULeftTop"></svg-icon>
-                </button>
-                <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
-                    <svg-icon type="mdi" :path="mdiArrowURightTop"></svg-icon>
-                </button>
-            </div>
-            <editor-content ref="editor" :editor="editor" @input="handleInput" />
+                <div v-if="editor" id="editorBtn">
+                    <button @click="takePhoto()"  :disabled="isLoading"> 
+                        <svg-icon type="mdi" :path="mdiCameraOutline"></svg-icon>
+                    </button>
+                    <button @click="verificarPlataforma()">
+                        <svg-icon type="mdi" :path="mdiMicrophone"></svg-icon>
+                    </button>
+                    <button v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb()"  v-show="mostrarButton">
+                        <svg-icon type="mdi" :path="mdiCloseCircleOutline"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+                        <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleItalic().run()" :disabled="!editor.can().chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+                        <svg-icon type="mdi" :path="mdiFormatItalic"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleStrike().run()" :disabled="!editor.can().chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+                        <svg-icon type="mdi" :path="mdiFormatStrikethroughVariant"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+                        <svg-icon type="mdi" :path="mdiFormatParagraph"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+                        <svg-icon type="mdi" :path="mdiFormatHeader1 "></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+                        <svg-icon type="mdi" :path="mdiFormatHeader2"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleBulletList().run()" :class="{ 'is-active': editor.isActive('bulletList') }">
+                        <svg-icon type="mdi" :path="mdiFormatListBulleted"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
+                        <svg-icon type="mdi" :path="mdiFormatListNumbered"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
+                        <svg-icon type="mdi" :path="mdiCodeBraces"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
+                        <svg-icon type="mdi" :path="mdiArrowULeftTop"></svg-icon>
+                    </button>
+                    <button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
+                        <svg-icon type="mdi" :path="mdiArrowURightTop"></svg-icon>
+                    </button>
+                </div>
+                <editor-content ref="editor" :editor="editor" @input="handleInput" />
 
-            <div>
-                <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-            </div>
+                <div>
+                    <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+                </div>
 
+            </template>
         </ion-content>
     </ion-page>
 </template>
@@ -117,6 +126,7 @@ export default {
             }),
             title: '',
             texto: '',
+            fecha: '',
             carpeta: '',
             numeroDeFilas: 1,
             token: '',
@@ -130,6 +140,7 @@ export default {
             isLoading: false,
             isCameraVisible: false,
             textoAnalizado: '',
+            cargandoNota: false
         }
     },
     beforeUnmount() {
@@ -170,6 +181,7 @@ export default {
             }
         },
         async getNota() {
+            this.cargandoNota = true
             await this.obtenerToken()
             const nota = this.$route.params.nota
 
@@ -183,6 +195,7 @@ export default {
                 this.llenarCampos()
             })
             .catch(error => console.error(error))
+            .then(() => this.cargandoNota = false)
         },
         async obtenerToken() {
             try {
@@ -193,9 +206,10 @@ export default {
             }
         },
         llenarCampos() {
-            this.title = this.arrayNota[0]['titulo_nota']
-            this.texto = this.arrayNota[0]['contenido_nota']
-            this.carpeta = this.arrayNota[0]['carpeta']
+            this.title = this.arrayNota.nota.titulo_nota
+            this.texto = this.arrayNota.nota.contenido_nota
+            this.fecha = this.arrayNota.fecha
+            this.carpeta = this.arrayNota.nota.carpeta
             this.editor.commands.setContent(this.texto);
         },
 
@@ -577,5 +591,26 @@ export default {
         margin: 5px;
         border-radius: 10px;
         background: transparent;
+    }
+
+    .contenedorSpinner{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 10vh; /* Ajusta esto según tus necesidades */
+    }
+
+    .spinner {
+        width: 11.2px;
+        height: 11.2px;
+        border-radius: 11.2px;
+        box-shadow: 28px 0px 0 0 rgba(71,75,255,0.2), 22.7px 16.5px 0 0 rgba(71,75,255,0.4), 8.68px 26.6px 0 0 rgba(71,75,255,0.6), -8.68px 26.6px 0 0 rgba(71,75,255,0.8), -22.7px 16.5px 0 0 #474bff;
+        animation: spinner-b87k6z 1s infinite linear;
+    }
+
+    @keyframes spinner-b87k6z {
+    to {
+        transform: rotate(360deg);
+    }
     }
 </style>

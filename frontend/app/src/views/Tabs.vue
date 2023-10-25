@@ -5,6 +5,7 @@
             <ion-tab-bar slot="bottom">
                 <div id="tab-bar">
                     <button @click="() => {this.$router.push('/crearNotas')}"><ion-icon :icon="add" size="large" color="white"></ion-icon></button>
+                    <button @click="() => {this.$router.push('/busqueda')}"><ion-icon :icon="searchOutline" size="large" color="white"></ion-icon></button>
                     <button @click="() => {this.$router.push('/crearExamen')}"><ion-icon :icon="readerOutline" size="large" color="white"></ion-icon></button>
                     <button @click="() => {this.$router.push('/usuario')}"><ion-icon :icon="personOutline" size="large" color="white"></ion-icon></button>
                 </div>
@@ -15,7 +16,7 @@
 
 <script>
 import { IonPage, IonTabs, IonTabBar, IonTabButton, IonButton, IonLabel, IonRouterOutlet, IonIcon, } from '@ionic/vue'
-import { add, arrowUp, readerOutline, personOutline } from "ionicons/icons";
+import { add, arrowUp, readerOutline, personOutline, searchOutline } from "ionicons/icons";
 
 export default {
     name: 'Tabs',
@@ -24,7 +25,7 @@ export default {
     },
     data() {
         return {
-            add, arrowUp, readerOutline, personOutline
+            add, arrowUp, readerOutline, personOutline, searchOutline
         }
     }
 }
@@ -32,13 +33,9 @@ export default {
 </script>
 
 <style>
-    ion-fab-button {
-        --border-radius: 15px;
-    }
-
     #tab-bar button{
         margin: 5px;
-        padding: 10px;
+        padding: 0;
         background-color: transparent;
     }
 
