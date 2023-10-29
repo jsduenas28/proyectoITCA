@@ -75,19 +75,40 @@
         </template>
         <template v-else>
           <ion-list :inset="true" style="border-radius: 20px;" v-for="(carpeta, i) in arrayCarpetas" :key="i">
-              <ion-list-header>
+              <ion-list-header :button="true">
                 <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
                 <ion-buttons style="margin-right: 10px;">
                     <ion-button @click="setOpen(true, carpeta.id)" shape="round"><ion-icon :icon="ellipsisHorizontalOutline" color="white"></ion-icon></ion-button>
                 </ion-buttons>
               </ion-list-header>
               <ion-item-group v-if="activeList === i">
-                  <ion-item @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                <ion-item-sliding v-for="(notas, j) in carpeta.notas" :key="j">
+                  <ion-item :button="true" @click="editar(notas.id)">
+                      <ion-icon :icon="documentTextOutline" size="large" color="white"></ion-icon>
                       <ion-label>{{ notas.titulo_nota }}</ion-label>
-                      <button @click.stop="alertEliminarNota(notas.id)" class="trashNote"><ion-icon :icon="trashOutline" color="danger" size="small"></ion-icon></button>
                     </ion-item>
+                    <ion-item-options slot="end">
+                      <ion-item-option @click.stop="alertEliminarNota(notas.id)" style="height: 85%; margin-right: 20px; border-radius: 10px; background-color: red;">
+                        <ion-icon size="large" :icon="trash" color="white"></ion-icon>
+                      </ion-item-option>
+                    </ion-item-options>
+                </ion-item-sliding>
               </ion-item-group>
           </ion-list>
+
+          <div v-if="arrayCarpetas.length === 0" style="text-align: center;">
+            <svg width="140" height="124" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="ð¦ icon &quot;folder outline&quot;">
+              <g id="Group">
+              <path id="Vector" d="M69.9921 60.7971H9.56786C7.82595 60.7971 6.15539 60.1052 4.92368 58.8735C3.69197 57.6418 3 55.9712 3 54.2293V9.56786C3 7.82595 3.69197 6.15539 4.92368 4.92368C6.15539 3.69197 7.82595 3 9.56786 3H22.0287C23.3255 3.00003 24.5933 3.38396 25.6722 4.1034L30.2435 7.15089C31.3224 7.87032 32.5902 8.25425 33.887 8.25429H69.9921C71.734 8.25429 73.4046 8.94625 74.6363 10.178C75.868 11.4097 76.56 13.0802 76.56 14.8221V54.2293C76.56 55.9712 75.868 57.6418 74.6363 58.8735C73.4046 60.1052 71.734 60.7971 69.9921 60.7971Z" stroke="#393939" stroke-width="5.25429" stroke-linecap="round" stroke-linejoin="round"/>
+              <path id="Vector_2" d="M3 21.39H76.56" stroke="#393939" stroke-width="5.25429" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              </g>
+            </svg>
+
+            <h1 style="color: #9aa0a6;">Parece que no tienes carpetas</h1>
+            <h3 style="color: #9aa0a6;">Crea una y comienza a escribir tus apuntes</h3>
+          </div>
         </template>
 
 
@@ -101,9 +122,9 @@
     </ion-page>
   </template>
   <script>
-  import { IonPage, IonContent, IonFab, IonFabButton, IonButton, IonButtons, IonFabList, IonGrid, IonRow, IonCol, IonActionSheet } from "@ionic/vue";
+  import { IonPage, IonContent, IonFab, IonFabButton, IonButton, IonButtons, IonFabList, IonGrid, IonRow, IonCol, IonActionSheet, IonItemSliding, IonItemOption, IonItemOptions } from "@ionic/vue";
   import CarpetaList from '../views/CarpetaList.vue'
-  import { briefcaseSharp, addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trashOutline, pencilOutline, checkmark, close, informationOutline } from 'ionicons/icons';
+  import { briefcaseSharp, addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trash, pencilOutline, checkmark, close, informationOutline } from 'ionicons/icons';
   import  ComponenteMenu  from '../views/ComponenteMenu.vue'
   import axios from '../api/api.js'
   import { Drivers, Storage } from '@ionic/storage';
@@ -119,7 +140,7 @@
   export default {
     name: 'ComponenteInicio',
     components: {
-      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonButton, IonButtons, IonGrid, IonRow, IonCol, IonActionSheet, ComponenteMenu, CarpetaList
+      IonPage, IonContent, IonFab, IonFabButton, IonFabList, IonButton, IonButtons, IonGrid, IonRow, IonCol, IonActionSheet, IonItemSliding, IonItemOption, IonItemOptions, ComponenteMenu, CarpetaList
     },
     data(){
         return {
@@ -127,7 +148,7 @@
             cargando: false,
             isOpen: false,
             briefcaseSharp,
-            addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trashOutline, pencilOutline, checkmark, close, informationOutline,
+            addOutline, add, documentTextOutline, ellipsisHorizontalOutline, trash, pencilOutline, checkmark, close, informationOutline,
             mensajeSaludo: '',
             activeList: null,
             arrayCarpetas: [],
@@ -158,7 +179,7 @@
             {
               text: 'Eliminar',
               cssClass: 'deleteButton',
-              icon: trashOutline,
+              icon: trash,
               role: 'destructive',
               data: {
                 action: 'delete',
