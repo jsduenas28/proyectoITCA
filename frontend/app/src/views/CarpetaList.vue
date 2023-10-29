@@ -1,7 +1,8 @@
 <template>
-        <ion-button @click="llamarToggleList" style="color: #000; margin-right: 20px; --border-radius: 20px;">
-            {{ llamarToggleList === toggleListName ? '↑' : '↓' }}
-        </ion-button>
+        <button id="btnToggle" @click="llamarToggleList">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+        </button>
+
         <div style="margin-right: 10px; align-items: center;">
             <svg width="45" height="45" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="&#240;&#159;&#166;&#134; icon &#34;folder outline&#34;">
@@ -18,7 +19,8 @@
 </template>
 
 <script>
-import { ellipsisHorizontalOutline } from 'ionicons/icons'
+import { ellipsisHorizontalOutline, chevronDownCircle } from 'ionicons/icons'
+import { IonIcon } from '@ionic/vue'
 
 export default {
     name: 'CarpetaList',
@@ -67,5 +69,17 @@ export default {
 
     .white {
         fill: white;
+    }
+
+    #btnToggle {
+        fill: white;
+        font-weight: bold;
+        padding-left: 11px;
+        padding-right: 11px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+        margin-right: 10px;
+        border-radius: 10px;
+        background-color: #444444;
     }
 </style>
