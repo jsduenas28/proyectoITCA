@@ -110,6 +110,7 @@ export default {
             estadoRes: '',
             cantPreguntas: '',
             cuestionarioFinalizado: false,
+            datosCuestionario: [],
         }
     },
     methods: {
@@ -146,9 +147,32 @@ export default {
                 console.error(error);
             }
         },
+        async setCuestionario() {
+            try {
+                await this.obtenerToken()
+                var idNota = this.$route.params.nota
+
+                let data = {
+                    nota_id: idNota,
+                    resultados: this.datosCuestionario,
+                    nota_cuestionario: this.respuestasCorrectas
+                }
+
+                axios.post('/api/resEstadisticos/store', data, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + this.token,
+                    }
+                })
+                .then()
+                .catch(error => console.error(error))
+            } catch (error) {
+                console.error(error);
+            }
+        },
         generarCuestionario() {
             if(this.indicePreguntaActual < this.objectoRes.data.length) {
-                this.respuestaSelect = null
+                this.respuestaSelect = ''
                 this.estadoRes = ''
                 this.resolverPregunta = false
                 this.objetoPregunta = this.objectoRes.data[this.indicePreguntaActual]
@@ -156,6 +180,7 @@ export default {
             } 
             else {
                 this.cuestionarioFinalizado = true
+                this.setCuestionario()
             }
         },
         validarPregunta() {
@@ -167,6 +192,13 @@ export default {
             }
 
             this.resolverPregunta = true
+            let datos = {
+                pregunta: this.objetoPregunta.question,
+                res_correcta: this.objetoPregunta.answer,
+                res_select: this.respuestaSelect
+            }
+
+            this.datosCuestionario.push(datos)
         },
         seleccionarRes(respuesta) {
             this.respuestaSelect = respuesta
