@@ -13,6 +13,8 @@ import ComponenteExamenCreado from '../views/ComponenteExamenCreado.vue'
 import ComponenteEditorUpdate from '../views/ComponenteEditorUpdate.vue'
 import ComponenteUsuario from '../views/ComponenteUsuario.vue'
 import ComponenteBusqueda from '../views/ComponenteBusqueda.vue'
+import ComponenteEstadisticaCuestionario from '../views/ComponenteEstadisticaCuestionario.vue'
+import ComponenteVerCuestionario from '../views/ComponenteVerCuestionario.vue'
 
 const routes = [
   {
@@ -73,6 +75,16 @@ const routes = [
     path: '/busqueda',
     name: 'ComponenteBusqueda',
     component: ComponenteBusqueda
+  },
+  {
+    path: '/tusCuestionarios',
+    name: 'ComponenteEstadisticaCuestionario',
+    component: ComponenteEstadisticaCuestionario
+  },
+  {
+    path: '/cuestionario/:id',
+    name: 'ComponenteVerCuestionario',
+    component: ComponenteVerCuestionario
   },
   {
     path: '/tabs/',

@@ -46,6 +46,11 @@
                 </ion-list>
                 <ion-list :inset="true" style="border-radius: 20px;">
                     <div class="divLogout">
+                        <button @click="irVistaTusCuestionarios" id="resCuestionarioBtn">Ver tus cuestionarios</button>
+                    </div>
+                </ion-list>
+                <ion-list :inset="true" style="border-radius: 20px;">
+                    <div class="divLogout">
                         <button @click="alertLogout" id="logoutBtn">Cerrar Sesión</button>
                     </div>
                 </ion-list>
@@ -85,6 +90,9 @@ export default {
     methods: {
         regresarVista() {
             this.$router.push({path: '/tabs/inicio'})
+        },
+        irVistaTusCuestionarios() {
+            this.$router.push({path: '/tusCuestionarios'})
         },
         async getUsuario() {
             try {
@@ -169,6 +177,13 @@ export default {
     padding: 15px;
     border-radius: 10px;
     background-color: red;
+    font-size: 17px;
+  }
+
+  #resCuestionarioBtn{
+    padding: 15px;
+    border-radius: 10px;
+    background-color: green;
     font-size: 17px;
   }
   
