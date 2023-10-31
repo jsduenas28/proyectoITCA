@@ -42,19 +42,25 @@
         </template>
 
         <template v-if="mostrarAlertElimina === true">
-          <div class="alertEliminar">
-            <div>
-              <h3>¿Seguro que quieres eliminar la {{ item }}?</h3>
-            </div>
-
-            <div class="btnAlert">
-              <button v-if="item === 'carpeta'" @click="elimiarCarpeta" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
-              <button v-else-if="item === 'nota'" @click="eliminarNota" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
-              <button @click="() => {
-                this.mostrarAlertElimina = false
-                this.idCarpeta = null
-                this.idNota = null
-              }" style="background-color: rgb(54, 54, 54);"><ion-icon :icon="close" size="small" color="white"></ion-icon></button>
+          <div class="fondoAlert" @click="() => {
+                  this.mostrarAlertElimina = false
+                  this.idCarpeta = null
+                  this.idNota = null
+                }">
+            <div class="alertEliminar" @click.stop>
+              <div>
+                <h3>¿Seguro que quieres eliminar la {{ item }}?</h3>
+              </div>
+  
+              <div class="btnAlert">
+                <button v-if="item === 'carpeta'" @click="elimiarCarpeta" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
+                <button v-else-if="item === 'nota'" @click="eliminarNota" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
+                <button @click="() => {
+                  this.mostrarAlertElimina = false
+                  this.idCarpeta = null
+                  this.idNota = null
+                }" style="background-color: rgb(54, 54, 54);"><ion-icon :icon="close" size="small" color="white"></ion-icon></button>
+              </div>
             </div>
           </div>
         </template>
@@ -500,15 +506,28 @@
     background-color: rgba(0, 0, 0, 0.3);
   }
 
-  .alertEliminar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .fondoAlert {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+
+  .alertEliminar {
+    display: block;
+    width: 60%;
     background-color: red;
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
   }
 
   .alertEliminar h3 {
@@ -518,7 +537,7 @@
   @media screen and (max-width: 600px) {
     .alertEliminar {
       display: block;
-      width: 100%;
+      width: 95%;
       background-color: red;
       border-radius: 10px;
       padding: 5px;
@@ -530,56 +549,145 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 60%;
     background-color: green;
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertSuccess {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: green;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
   }
 
   .alertNotaCreada {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 60%;
     background-color: rgb(75, 74, 74);
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertNotaCreada {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: rgb(75, 74, 74);
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
   }
 
   .alertNotaUpdate {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 60%;
     background-color: rgb(75, 74, 74);
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
   }
 
+  @media screen and (max-width: 600px) {
+    .alertNotaUpdate {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: rgb(75, 74, 74);
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
 
   .alertCarpetaCreate {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 60%;
     background-color: rgb(75, 74, 74);
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertCarpetaCreate {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: rgb(75, 74, 74);
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
   }
 
   .alertCarpetaUpdate {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 60%;
     background-color: rgb(75, 74, 74);
     border-radius: 10px;
     padding: 5px;
     text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertCarpetaUpdate {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: rgb(75, 74, 74);
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
   }
 
   .btnAlert button{
