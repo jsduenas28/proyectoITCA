@@ -28,7 +28,7 @@
                         <CarpetaList :name="carpeta.nombre_carpeta" :color="carpeta.color_carpeta" :toggleListName="i" :idCarpeta="carpeta.id" :metodoToggleList="toggleList" />
                     </ion-list-header>
                     <ion-item-group v-if="activeList === i">
-                        <ion-item :button="true" @click="editar(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
+                        <ion-item :button="true" @click="irCuestionario(notas.id)" v-for="(notas, j) in carpeta.notas" :key="j">
                             <ion-label>{{ notas.titulo_nota }}</ion-label>
                         </ion-item>
                     </ion-item-group>
@@ -82,7 +82,7 @@ export default {
         regresarVista() {
             this.$router.push('/tabs/inicio')
         },
-        editar(id) {
+        irCuestionario(id) {
             this.$router.push({path: `/examenCreado/${id}`})
         },
         toggleList(listName) {

@@ -15,6 +15,7 @@ import ComponenteUsuario from '../views/ComponenteUsuario.vue'
 import ComponenteBusqueda from '../views/ComponenteBusqueda.vue'
 import ComponenteEstadisticaCuestionario from '../views/ComponenteEstadisticaCuestionario.vue'
 import ComponenteVerCuestionario from '../views/ComponenteVerCuestionario.vue'
+import ComponenteEstadisticas from '../views/ComponenteEstadisticas.vue'
 
 const routes = [
   {
@@ -85,6 +86,11 @@ const routes = [
     path: '/cuestionario/:id',
     name: 'ComponenteVerCuestionario',
     component: ComponenteVerCuestionario
+  },
+  {
+    path: '/estadisticas',
+    name: 'ComponenteEstadisticas',
+    component: ComponenteEstadisticas
   },
   {
     path: '/tabs/',

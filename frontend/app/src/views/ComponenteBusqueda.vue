@@ -10,20 +10,32 @@
         </ion-header>
 
         <ion-content class="ion-padding">
-            <template v-if="mostrarAlertElimina === true">
-                <div class="alertEliminar">
-                    <div>
-                        <h3>¿Seguro que quieres eliminar la nota?</h3>
-                    </div>
+            <template v-if="mostrarAlertSuccess === true">
+                <div class="alertSuccess">
+                    <ion-icon :icon="checkmark" size="large" color="white"></ion-icon>
+                    <h3>Acción completada con éxito</h3>
+                </div>
+            </template>
 
-                    <div class="btnAlert">
-                        <button @click="eliminarNota" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
-                        <button @click="() => {
-                            this.mostrarAlertElimina = false
-                            this.idNota = null
-                        }" style="background-color: rgb(54, 54, 54);"><ion-icon :icon="close" size="small" color="white"></ion-icon></button>
+            <template v-if="mostrarAlertElimina === true">
+                <div class="fondoAlert" @click="() => {
+                                this.mostrarAlertElimina = false
+                                this.idNota = null
+                            }">
+                    <div class="alertEliminar" @click.stop>
+                        <div>
+                            <h3>¿Seguro que quieres eliminar la nota?</h3>
+                        </div>
+    
+                        <div class="btnAlert">
+                            <button @click="eliminarNota" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
+                            <button @click="() => {
+                                this.mostrarAlertElimina = false
+                                this.idNota = null
+                            }" style="background-color: rgb(54, 54, 54);"><ion-icon :icon="close" size="small" color="white"></ion-icon></button>
+                        </div>
                     </div>
-                </div> <br>
+                </div>
             </template>
             
             <br>
@@ -98,7 +110,10 @@
                                     <ion-label>{{ nota.titulo_nota }}</ion-label>
                                 </ion-item>
                                 <ion-item-options slot="end">
-                                    <ion-item-option @click="alertEliminarNota(nota.id)" style="height: 85%; margin-right: 20px; border-radius: 10px; background-color: red;">
+                                    <ion-item-option @click="irCuestionario(nota.id)" style="height: 80%; margin-right: 10px; border-radius: 10px; background-color: rgb(0, 119, 255);">
+                                        <ion-icon size="large" :icon="readerOutline" color="white"></ion-icon>
+                                    </ion-item-option>
+                                    <ion-item-option @click="alertEliminarNota(nota.id)" style="height: 80%; margin-right: 20px; border-radius: 10px; background-color: red;">
                                         <ion-icon size="large" :icon="trash" color="white"></ion-icon>
                                     </ion-item-option>
                                 </ion-item-options>
@@ -113,7 +128,7 @@
 
 <script>
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonInput, IonSelect, IonItem, IonItemSliding, IonItemOption, IonItemOptions, IonSelectOption, IonList, IonLabel, IonIcon } from '@ionic/vue'
-import { documentTextOutline, trash, checkmark, close, } from 'ionicons/icons';
+import { documentTextOutline, trash, checkmark, close, readerOutline } from 'ionicons/icons';
 
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
@@ -131,7 +146,7 @@ export default {
     },
     data() {
         return {
-            documentTextOutline, trash, checkmark, close,
+            documentTextOutline, trash, checkmark, close, readerOutline,
             spinner: false,
             modoBusqueda: 0,
             busquedaFecha: '',
@@ -141,12 +156,16 @@ export default {
             notas: null,
             mostrarAlertElimina: false,
             idNota: null,
-            indexCarpeta: null
+            indexCarpeta: null,
+            mostrarAlertSuccess: false
         }
     },
     methods: {
         regresarVista() {
             this.$router.push('/tabs/inicio')
+        },
+        irCuestionario(id) {
+            this.$router.push({path: `/examenCreado/${id}`})
         },
         async getCarpetas() {
             try {
@@ -234,6 +253,13 @@ export default {
                 }
             }
         },
+        alertSuccess() {
+          this.mostrarAlertSuccess = true
+
+          setTimeout(() => {
+            this.mostrarAlertSuccess = false
+          }, 3000);
+        },
         async eliminarNota() {
             try {
                 await this.obtenerToken()
@@ -247,6 +273,7 @@ export default {
                     this.obtenerNotas()
                     this.mostrarAlertElimina = false
                     this.idNota = null
+                    this.alertSuccess()
                 })
                 .catch(error => console.error(error))
             } catch (error) {
@@ -306,6 +333,64 @@ export default {
         align-items: center;
         height: 20vh; /* Ajusta esto según tus necesidades */
     }
+
+    .alertEliminar {
+    display: block;
+    width: 60%;
+    background-color: red;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  .alertEliminar h3 {
+    margin-left: 10px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertEliminar {
+      display: block;
+      width: 95%;
+      background-color: red;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
+
+  .alertSuccess{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 60%;
+    background-color: green;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertSuccess {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: green;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
 
     .spinner {
         width: 11.2px;

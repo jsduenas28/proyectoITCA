@@ -10,6 +10,34 @@
         </ion-header>
 
         <ion-content class="ion-padding">
+            <template v-if="mostrarAlertSuccess === true">
+                <div class="alertSuccess">
+                    <ion-icon :icon="checkmark" size="large" color="white"></ion-icon>
+                    <h3>Acción completada con éxito</h3>
+                </div>
+            </template>
+
+            <template v-if="mostrarAlertElimina === true">
+                <div class="fondoAlert" @click="() => {
+                                this.mostrarAlertElimina = false
+                                this.idNota = null
+                            }">
+                    <div class="alertEliminar" @click.stop>
+                        <div>
+                            <h3>¿Seguro que quieres eliminar el cuestionario?</h3>
+                        </div>
+    
+                        <div class="btnAlert">
+                            <button @click="eliminarCuestionario" style="background-color: green;"><ion-icon :icon="checkmark" size="small" color="white"></ion-icon></button>
+                            <button @click="() => {
+                                this.mostrarAlertElimina = false
+                                this.idCuestionario = null
+                            }" style="background-color: rgb(54, 54, 54);"><ion-icon :icon="close" size="small" color="white"></ion-icon></button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
             <template v-if="cargando === true">
                 <div class="contenedorSpinner">
                     <div class="spinner"></div>
@@ -17,7 +45,7 @@
             </template>
             <template v-else>
                 <ion-list :inset="true" style="border-radius: 20px;">
-                    <ion-item :button="true" style="bottom: -5px;">
+                    <ion-item :button="true" style="bottom: -5px;" @click="irEstadisticas">
                         <h3>Tus Estadisticas</h3>
                     </ion-item>
                 </ion-list> <br>
@@ -38,7 +66,7 @@
                             <h3>{{ cuestionario.titulo_nota }}</h3>
                         </ion-item>
                         <ion-item-options slot="end">
-                          <ion-item-option @click.stop="eliminarCuestionario(cuestionario.id)" style="height: 80%; margin-right: 20px; border-radius: 10px; background-color: red;">
+                          <ion-item-option @click.stop="alertEliminarNota(cuestionario.id)" style="height: 80%; margin-right: 20px; border-radius: 10px; background-color: red;">
                             <ion-icon size="large" :icon="trash" color="white"></ion-icon>
                           </ion-item-option>
                         </ion-item-options>
@@ -51,7 +79,8 @@
 
 <script>
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonList, IonListHeader, IonLabel, IonItem, IonItemSliding, IonItemOptions, IonItemOption, IonIcon } from '@ionic/vue'
-import { trash } from 'ionicons/icons';
+import { trash, checkmark, close } from 'ionicons/icons';
+
 import axios from '../api/api.js'
 import { Drivers, Storage } from '@ionic/storage';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver'
@@ -69,10 +98,13 @@ export default {
     },
     data() {
         return {
-            trash,
+            trash, checkmark, close,
             token: '',
             arrayCuestionarios: null,
-            cargando: false
+            cargando: false,
+            mostrarAlertElimina: false,
+            idCuestionario: null,
+            mostrarAlertSuccess: false
         }
     },
     methods: {
@@ -81,6 +113,9 @@ export default {
         },
         irVerCuestionario(id) {
             this.$router.push({path: `/cuestionario/${id}`})
+        },
+        irEstadisticas() {
+            this.$router.push({path: '/estadisticas'})
         },
         async getCuestionarios() {
             try {
@@ -100,16 +135,30 @@ export default {
                 console.error(error);
             }
         },
-        async eliminarCuestionario(id) {
+        alertEliminarNota(i) {
+            this.mostrarAlertElimina = true
+            this.idCuestionario = i
+        },
+        alertSuccess() {
+          this.mostrarAlertSuccess = true
+
+          setTimeout(() => {
+            this.mostrarAlertSuccess = false
+          }, 3000);
+        },
+        async eliminarCuestionario() {
             try {
                 await this.obtenerToken()
                 this.cargando = true
-                axios.delete(`http://127.0.0.1:8000/api/resEstadisticos/delete/${id}`, {
+                axios.delete(`/api/resEstadisticos/delete/${this.idCuestionario}`, {
                     headers: {
                         'Authorization': 'Bearer ' + this.token
                     }
                 })
                 .then(response => {
+                    this.mostrarAlertElimina = false
+                    this.idCuestionario = null
+                    this.alertSuccess()
                     this.getCuestionarios()
                 })
                 .catch(error => console.error(error))
@@ -158,6 +207,64 @@ export default {
   @keyframes spinner-b87k6z {
     to {
         transform: rotate(360deg);
+    }
+  }
+
+  .alertEliminar {
+    display: block;
+    width: 60%;
+    background-color: red;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  .alertEliminar h3 {
+    margin-left: 10px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertEliminar {
+      display: block;
+      width: 95%;
+      background-color: red;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
+    }
+  }
+
+  .alertSuccess{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 60%;
+    background-color: green;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+  }
+
+  @media screen and (max-width: 600px) {
+    .alertSuccess {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 95%;
+      background-color: green;
+      border-radius: 10px;
+      padding: 5px;
+      text-align: center;
     }
   }
 </style>
