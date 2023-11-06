@@ -33,6 +33,9 @@
                 <button v-if="infoPlataforma === 'web'" @click="finalizarReconocimientoWeb()"  v-show="mostrarButton">
                     <svg-icon type="mdi" :path="mdiCloseCircleOutline"></svg-icon>
                 </button>
+                <button  @click="selectDocument()" :disabled="isLoading">
+                    <svg-icon type="mdi" :path="mdiFileDocumentOutline"></svg-icon>
+                </button>
                 <button @click="editor.chain().focus().toggleBold().run()" :disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
                     <svg-icon type="mdi" :path="mdiFormatBold"></svg-icon>
                 </button>
@@ -93,7 +96,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline} from '@mdi/js';
+import { mdiFormatBold, mdiFormatItalic, mdiFormatStrikethroughVariant, mdiCodeBraces, mdiFormatParagraph, mdiFormatHeader1, mdiFormatHeader2,mdiFormatListBulleted, mdiFormatListNumbered, mdiArrowULeftTop, mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline, mdiFileDocumentOutline} from '@mdi/js';
 import { close, } from 'ionicons/icons';
 
 import axios from '../api/api.js'
@@ -112,7 +115,7 @@ export default {
     name: 'EditorPage',
     data() {
         return {
-            mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline,
+            mdiFormatBold, mdiFormatItalic,mdiFormatStrikethroughVariant,mdiCodeBraces,mdiFormatParagraph,mdiFormatHeader1,mdiFormatHeader2,mdiFormatListBulleted,mdiFormatListNumbered,mdiArrowULeftTop,mdiArrowURightTop, mdiCameraOutline, mdiMicrophone, mdiCloseCircleOutline, mdiFileDocumentOutline,
             close,
             editor: new Editor( {
                 extensions: [
@@ -136,6 +139,7 @@ export default {
             isLoading: false,
             isCameraVisible: false,
             textoAnalizado: '',
+            documentoAnalizado: '',
         }
     },
     components: {
@@ -333,9 +337,7 @@ export default {
                     });
 
                     this.handleInput();
-                }
-
-                //this.ultimoTextoReconocido = event.results.length;                   
+                }              
             }
 
             this.recognition.onstart = () => {
@@ -447,30 +449,18 @@ export default {
                     },
                 )
                 .then((response) => {
-                    console.log('Éxito', response.data);
                     console.log('ESTE ES EL BINARIO A ENVIAR: ', imageBlob);
                     this.textoAnalizado += response.data.readResult.content;
-                    
+                    this.textoAnalizado = this.textoAnalizado.replace(/\n/g, "<br>");
+            
                     const contenidoExistenteOCR = this.editor.getText();
+                    const contenidoExistenteLimpio = contenidoExistenteOCR.replace(/\n/g, "<br>");
 
                     const textoReconocidoOCR = this.textoAnalizado;
-                    const textoLimpioOCR = textoReconocidoOCR.trim();
-                    const nuevoContenidoOCR = `${contenidoExistenteOCR} \n ${textoLimpioOCR}`;
+                    //const textoLimpioOCR = textoReconocidoOCR.trim();
+                    const nuevoContenidoOCR = `${contenidoExistenteLimpio} <br><br> ${textoReconocidoOCR}`;
 
-                    this.editor.commands.setContent({
-                    type: 'doc',
-                    content: [
-                        {
-                        type: 'paragraph',
-                        content: [
-                            {
-                            type: 'text',
-                            text: nuevoContenidoOCR,
-                            },
-                        ],
-                        },
-                    ],
-                    });
+                    this.editor.commands.setContent(nuevoContenidoOCR);
 
                     this.isLoading = false;
                     this.handleInput();
@@ -486,6 +476,95 @@ export default {
         async getImageBlob(imageUri) {
             const response = await fetch(imageUri);
             return await response.blob();
+        },
+
+        //ESCANEO DE DOCUMENTOS
+        async selectDocument() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            fileInput.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    try {
+                        this.isLoading = true;
+                        this.documentoAnalizado = '';
+                        const endpoint = 'https://itcaocrvernedocumentos.cognitiveservices.azure.com/';
+                        const apiUrl = `${endpoint}formrecognizer/documentModels/prebuilt-read:analyze?`;
+
+                        let headerss;
+                        if (file.type === 'application/pdf') {
+                            headerss = {
+                                'Ocp-Apim-Subscription-Key': 'cfe254cf8dc34591b30764865d12f358',
+                                'Content-Type': 'application/pdf',
+                            };
+                        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                            headerss = {
+                                'Ocp-Apim-Subscription-Key': 'cfe254cf8dc34591b30764865d12f358',
+                                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            };
+                        } else {
+                            alert('TIPO DE ARCHIVO NO PERMITIDO, SOLO PDF/WORD');
+                        };
+
+                        const headers = headerss;
+
+                        const params = {
+                            'api-version': '2023-07-31',
+                            'stringIndexType': 'utf16CodeUnit',
+                        };
+
+                        const response = await axios.post(apiUrl, file, { params, headers, withCredentials: false });
+
+                        if (response.status === 202) {
+                            const operationLocation = response.headers['operation-location'];
+                            await this.waitForOperationCompletion(operationLocation, headers);
+                        } else {
+                            throw new Error('La solicitud no se aceptó correctamente.');
+                        }
+                    } catch (error) {
+                        console.error('Error al escanear el documento:', error);
+                        alert('ERROR AL ESCANEAR DOCUMENTO');
+                    } finally {
+                        this.isLoading = false;
+                    }
+                }
+            });
+
+            fileInput.click();
+        },
+
+        async waitForOperationCompletion(operationLocation, headers) {
+            while (true) {
+                const resultResponse = await this.checkOperationStatus(operationLocation, headers);
+                if (resultResponse.data.status === 'succeeded') {
+                    this.documentoAnalizado += resultResponse.data.analyzeResult.content;
+                    this.documentoAnalizado = this.documentoAnalizado.replace(/\n/g, "<br>");
+
+                    const contenidoExistenteDocumento = this.editor.getText();
+                    const contenidoExistenteDocumentoLimpio = contenidoExistenteDocumento.replace(/\n/g, "<br>");
+                    const documentoAnalizadoLimpio = this.documentoAnalizado;
+
+                    const nuevoContenidoEscaneado = `${contenidoExistenteDocumentoLimpio}<br><br> ${documentoAnalizadoLimpio}`;
+
+                    this.editor.commands.setContent(nuevoContenidoEscaneado);
+                    this.isLoading = false;
+                    this.handleInput();
+                    break;
+
+                } else if (resultResponse.data.status === 'failed') {
+                    console.error('La operación ha fallado:', resultResponse);
+                    this.isLoading = false;
+                    break;
+                } else {
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                }
+            }
+        },
+
+        async checkOperationStatus(operationLocation, headers) {
+            const resultResponse = await axios.get(operationLocation, { headers,withCredentials: false  });
+            return resultResponse;
         },
 
     } //aqui termina methods
